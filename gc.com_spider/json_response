@@ -1,0 +1,36 @@
+{
+	"cs": {
+		"li": false, 
+		"dist": 2.5261767481458, 
+		"pm": false, 
+		"count": 24, 
+		"c": 1, 
+		"et": 0.00234299235734492, 
+		"cc": [
+			{"lat": 47.680333, "id": 144506, "lon": -122.328333, "gc": "GCJM5D", "ctid": 3, "f": false, "o": false, "ia": true, "nn": "Crossing Green Lake"}, 
+			{"lat": 47.66885, "id": 181187, "lon": -122.333083, "gc": "GCKWAN", "ctid": 2, "f": false, "o": false, "ia": false, "nn": "Coffee House Hotspot"}, 
+			{"lat": 47.666667, "id": 186020, "lon": -122.325, "gc": "GCM1BJ", "ctid": 8, "f": false, "o": false, "ia": true, "nn": "Small Town Connection"}, 
+			{"lat": 47.668133, "id": 186526, "lon": -122.3263, "gc": "GCM1WX", "ctid": 2, "f": false, "o": false, "ia": true, "nn": "Upper Wallingford Play"}, 
+			{"lat": 47.666617, "id": 242963, "lon": -122.3477, "gc": "GCNYKE", "ctid": 2, "f": false, "o": false, "ia": true, "nn": "Totally Tubular II"}, 
+			{"lat": 47.683333, "id": 285372, "lon": -122.35, "gc": "GCQBQF", "ctid": 8, "f": false, "o": false, "ia": true, "nn": "Seattle Sudoku"}, 
+			{"lat": 47.671417, "id": 304669, "lon": -122.346633, "gc": "GCR0TZ", "ctid": 3, "f": false, "o": false, "ia": true, "nn": "Totally Tubular V"}, 
+			{"lat": 47.677783, "id": 331269, "lon": -122.35465, "gc": "GCRXG1", "ctid": 2, "f": false, "o": false, "ia": true, "nn": "EEOC"}, 
+			{"lat": 47.67875, "id": 336099, "lon": -122.345267, "gc": "GCT2GV", "ctid": 2, "f": false, "o": false, "ia": true, "nn": "Frederick"}, 
+			{"lat": 47.672883, "id": 338198, "lon": -122.337583, "gc": "GCT4PH", "ctid": 3, "f": false, "o": false, "ia": true, "nn": "Trees of Greenlake: Tremuloides"}, 
+			{"lat": 47.671367, "id": 338702, "lon": -122.3431, "gc": "GCT57T", "ctid": 3, "f": false, "o": false, "ia": true, "nn": "Trees of Greenlake: Atlantica"}, 
+			{"lat": 47.6744, "id": 343930, "lon": -122.335317, "gc": "GCTANE", "ctid": 3, "f": false, "o": false, "ia": true, "nn": "Trees of Greenlake: The Empress"}, 
+			{"lat": 47.670583, "id": 346015, "lon": -122.3532, "gc": "GCTCVP", "ctid": 2, "f": false, "o": false, "ia": true, "nn": "I can smell zoo!"}, 
+			{"lat": 47.680833, "id": 354084, "lon": -122.345833, "gc": "GCTN80", "ctid": 8, "f": false, "o": false, "ia": true, "nn": "Pennies From Heaven"}, 
+			{"lat": 47.675, "id": 377231, "lon": -122.341667, "gc": "GCVEAN", "ctid": 8, "f": false, "o": false, "ia": true, "nn": "Bottom of Green Lake"}, 
+			{"lat": 47.683333, "id": 458813, "lon": -122.35, "gc": "GCY67B", "ctid": 8, "f": false, "o": false, "ia": true, "nn": "Silly Sally"}, 
+			{"lat": 47.672983, "id": 572744, "lon": -122.32205, "gc": "GC120RH", "ctid": 2, "f": false, "o": false, "ia": true, "nn": "Ceci n\'est pas un parc"}, 
+			{"lat": 47.67745, "id": 656596, "lon": -122.332333, "gc": "GC14V1E", "ctid": 2, "f": false, "o": false, "ia": true, "nn": "Green Lake Grove"}, 
+			{"lat": 47.666667, "id": 675819, "lon": -122.333333, "gc": "GC15F1H", "ctid": 8, "f": false, "o": false, "ia": true, "nn": "Google This!"}, 
+			{"lat": 47.66926, "id": 696765, "lon": -122.35699, "gc": "GC165V7", "ctid": 2, "f": false, "o": false, "ia": true, "nn": "Cornered"}, 
+			{"lat": 47.669, "id": 741527, "lon": -122.354033, "gc": "GC17ND5", "ctid": 8, "f": false, "o": false, "ia": true, "nn": "Z00-Logical Park"}, 
+			{"lat": 47.66765, "id": 751673, "lon": -122.343583, "gc": "GC180ZE", "ctid": 2, "f": false, "o": false, "ia": true, "nn": "Woodland Park Cheez"}, 
+			{"lat": 47.670483, "id": 784515, "lon": -122.333983, "gc": "GC1944W", "ctid": 2, "f": false, "o": false, "ia": true, "nn": "Triangle Park 2"}, 
+			{"lat": 47.6756, "id": 887921, "lon": -122.3542, "gc": "GC1CJQH", "ctid": 2, "f": false, "o": false, "ia": true, "nn": "The Red Bench"}
+		]
+	}
+}

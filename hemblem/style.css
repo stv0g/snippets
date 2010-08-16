@@ -1,0 +1,28 @@
+@CHARSET "UTF-8";
+
+body {
+	background-color: black;
+}
+
+#wrapper {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -139px;
+	margin-left: -139px;
+	height: 278px;
+	width: 278px;
+}
+
+#glider td {
+	height: 90px;
+	width: 90px;
+	padding: 0px;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+#glider td:hover {
+	background-image: url(bcrcl.gif);
+}
+

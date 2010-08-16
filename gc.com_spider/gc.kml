@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+	<NetworkLink>
+		<open>1</open>
+				<name>Geocaching.com Network KML</name>
+				<description>High accuracy geocache locator</description>
+				<open>1</open>
+				<visibility>1</visibility>
+				<refreshVisibility>0</refreshVisibility>
+				<Url>
+					<href>http://localhost/workspace/GC.com/kml.php</href>
+					<viewRefreshTime>3</viewRefreshTime>
+					<viewRefreshMode>onStop</viewRefreshMode>
+				</Url>
+	</NetworkLink>
+</kml>

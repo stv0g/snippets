@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<title>InteractivePHP</title>
+		<script type="text/javascript" src="slider/js/range.js"></script>
+		<script type="text/javascript" src="slider/js/timer.js"></script>
+		<script type="text/javascript" src="slider/js/slider.js"></script>
+		<link type="text/css" rel="StyleSheet" href="slider/css/bluecurve/bluecurve.css" />
+		<meta http-equiv="cache-control" content="no-cache" />
+	</head>
+	<body style="background-color: rgb(230,230,230);">
+		<div style="font-size: 150%;">InteractivePHP (PHP + GD + JS)</div>
+		<div><img style="border: 1px solid black; margin: 25px;" id="animation_image" src="image.php" alt="animation image" /></div>
+		<div class="label">Text-Angle</div><div style="width: 700px;" class="slider" id="slider-1" ><input class="slider-input" id="slider-input-1" name="slider-input-1"/></div>
+		<div class="label">x-Position</div><div style="width: 700px;" class="slider" id="slider-2" ><input class="slider-input" id="slider-input-2" name="slider-input-2"/></div>
+		<div class="label">y-Position</div><div style="width: 700px;" class="slider" id="slider-3" ><input class="slider-input" id="slider-input-3" name="slider-input-3"/></div>
+		<div class="label">Font-Size</div><div style="width: 700px;" class="slider" id="slider-4" ><input class="slider-input" id="slider-input-4" name="slider-input-4"/></div>
+		<div class="label">Image-Size</div><div style="width: 700px;" class="slider" id="slider-5" ><input class="slider-input" id="slider-input-5" name="slider-input-5"/></div>
+		<div class="label">Text</div><div style="margin-top: 5px;" ><input name="text" style="width: 700px;" type="text" id="text" value="www.steffenvogel.de" onkeyup="s.onchange();" /></div>
+		<div class="label">Animation</div><div style="margin-top: 5px;" ><input name="start" type="button" value="start" onclick="int = setInterval(\'incangle()\', y.getValue());" /> <input name="stop" type="button" value="stop" onclick="clearInterval(int);" /></div>
+		<div class="label">Animation-Speed</div><div style="width: 700px;" class="slider" id="slider-6" ><input class="slider-input" id="slider-input-6" name="slider-input-6"/></div>
+		<div class="label">Font</div><div style="margin-top: 5px;" ><select name="font" id="font" size="1" onchange="redraw();">
+																		<option value="1">1</option>
+																		<option selected="selected" value="2">2</option>
+																		<option value="3">3</option>
+																		<option value="4">4</option>
+																		<option value="5">5</option>
+																		<option value="6">6</option>
+																	</select></div>
+		<div style="margin-top: 25px;" >Code &amp; Erläuterungen auf <a href="http://www.steffenvogel.de/">http://www.steffenvogel.de</a></div>
+		<div style="float: right; font-size: 90%;" >&copy; Steffen Vogel<br /><a href="mailto:info@steffenvogel.de">info@steffenvogel.de</a><br /><a href="http://www.steffenvogel.de">http://www.steffenvogel.de</a><br /><br />Slider by Erik Arvidsson @ <a href="http://webfx.eae.net/dhtml/slider/slider.html" >WebFx</a></div>
+		
+		<script type="text/javascript">
+			var int;
+			var s = new Slider(document.getElementById("slider-1"), document.getElementById("slider-input-1"));
+			var t = new Slider(document.getElementById("slider-2"), document.getElementById("slider-input-2"));
+			var u = new Slider(document.getElementById("slider-3"), document.getElementById("slider-input-3"));
+			var v = new Slider(document.getElementById("slider-4"), document.getElementById("slider-input-4"));
+			var x = new Slider(document.getElementById("slider-5"), document.getElementById("slider-input-5"));
+			var y = new Slider(document.getElementById("slider-6"), document.getElementById("slider-input-6"));
+			
+			s.onchange = redraw;
+			t.onchange = redraw;
+			u.onchange = redraw;
+			v.onchange = redraw;
+			x.onchange = redraw;
+			y.onchange = changespeed;
+			
+			function changespeed() {
+				if (int) {
+					clearInterval(int);
+					int = setInterval("incangle()", y.getValue());
+				}
+			}
+			
+			s.setValue(0);
+			t.setValue(50);
+			u.setValue(100);
+			v.setValue(15);
+			x.setValue(70);
+			y.setValue(130);
+			
+			s.setMaximum(270);
+			s.setMinimum(-90);
+			t.setMaximum(400);
+			u.setMaximum(300);
+			v.setMaximum(40);
+			y.setMaximum(150);
+			y.setMinimum(10);
+			
+			int = setInterval("incangle()", 50);
+			
+			function incangle() {
+				if (s.getValue() == s.getMaximum())
+					s.setValue(s.getMinimum());
+				s.setValue(s.getValue() + 1);
+				redraw();
+			}
+			
+			function redraw() {
+				document.getElementById("animation_image").src = "image.php?font=" + document.getElementById("font").value + "&imgsize=" + x.getValue() + "&x=" + t.getValue() + "&y=" + u.getValue() + "&fontsize=" + v.getValue() + "&angle=" + s.getValue() + "&text=" + document.getElementById("text").value; 
+			}
+			
+			redraw();
+		</script>
+	</body>
+</html>
