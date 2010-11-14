@@ -1,5 +1,7 @@
 #!/bin/bash
 
+// TODO thats just a draft. It's not working yet! Please contact me, if you are interested in this script
+
 // fetch learning rooms
 wget https://www2.elearning.rwth-aachen.de/foyer/summary/default.aspx
 
