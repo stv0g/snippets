@@ -1,0 +1,11 @@
+#!/bin/bash
+
+// fetch learning rooms
+wget https://www2.elearning.rwth-aachen.de/foyer/summary/default.aspx
+
+// parse urls
+
+// remove old urls from .gtk-bookmarks
+
+// append to .gtk-bookmarks
+davs://www2.elearning.rwth-aachen.de/ws10/10ws-09977/materials/documents L²P MMET Projekt
