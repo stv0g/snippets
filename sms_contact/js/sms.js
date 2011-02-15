@@ -20,8 +20,9 @@ function update_length(msg) {
 }
 
 function send(frm) {
+	var delta_t = 1000*5*60; // vadility of hash in seconds
 	frm.message.value = frm.message.value.trim()
-	frm.antispam.value = hex_md5(frm.message.value);
+	frm.antispam.value = hex_md5(frm.message.value + Math.ceil(new Date().getTime() / delta_t));
 	
 	if (frm.message.value.length > 160) {
 		alert('Message is too long!');

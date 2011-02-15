@@ -27,11 +27,12 @@ if ($_POST) {
 	$balance = $sipgate->getBalance();
 	$message = str_replace("\r", "", trim($_POST['message']));
 	$blacklist = read_blacklist($config['blocked']);
+	$delta_t = 60*5;
 
 	if (!isset($_POST['message'])) {
 		throw new Exception('Keine Nachricht!', 5);
 	}
-	if ($_POST['antispam'] != md5($message)) {
+	if ($_POST['antispam'] != md5($message . ceil(time() / $delta_t))) { // check hash
 		throw new Exception('Willst du mich bescheissen? Bitte aktiviere Javascript!', 1);
 	}
 	if (strlen($message) > 160) {
