@@ -1,0 +1,62 @@
+body {
+	padding: 10px 0 0 30px;
+}
+
+#wrapper {
+	width: 1050px;
+	margin: 0 auto;
+}
+
+#header {
+	font-size: 300%;
+	text-decoration: underline;
+	text-align: center;
+	margin-bottom: 10px;
+}
+
+#sols {
+	float: left;
+	height: 300px
+}
+
+#copy {
+	font-size: 90%;
+	float: right;
+	S
+}
+
+#show {
+	float: right;
+	width: 700px;
+}
+
+.show {
+	background-color: #000;
+}
+
+.show td {
+	text-align: center;
+}
+
+.show th {
+	height: 30px;
+	background-color: #fff;
+	width: 50px;
+}
+
+.headleft {
+	background-color: #fff;
+	width: 30px;
+}
+
+.white {
+	background-color: #fff;
+	width: 50px;
+	height: 50px;
+}
+
+.black {
+	background-color: #999;
+	width: 50px;
+	height: 50px;
+}
