@@ -5,10 +5,11 @@
 <head>
 	<title>Schicke mir eine Kurznachricht</title>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<script src="js/md5.js" type="text/javascript"></script>
-	<script src="js/sms.js" type="text/javascript"></script>
+	<script src="md5.js" type="text/javascript"></script>
+	<script src="sms.js" type="text/javascript"></script>
+	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
-	<body>
+	<body onload="document.forms.sms_frm.message.focus()">
 		<div id="sms_contact">
 <?php
 
@@ -18,37 +19,44 @@ require_once 'xmlrpc/xmlrpc.inc';
 require_once 'sipgateAPI.php';
 
 set_exception_handler(function($exception) {
-	echo '<p style="color: red; font-weight: bold;">Fehler: [' . $exception->getCode() . '] ' . $exception->getMessage() . '</p>';
+	echo '<p class="error">Fehler: ' . $exception->getMessage() . '</p>';
+	if (get_class($exception) != 'Exception') {
+		echo '(Code: ' . $exception->getCode() . ')';
+	}
+
 	show_form();
 });
 
 if ($_POST) {
-	$sipgate = new sipgateAPI($config['username'], $config['password']);
-	$balance = $sipgate->getBalance();
-	$message = str_replace("\r", "", trim($_POST['message']));
+	$sipgate   = new sipgateAPI($config['username'], $config['password']);
+	$balance   = $sipgate->getBalance();
+	$message   = preg_replace('/\r?\n/m', '\n', trim($_POST['message']));
 	$blacklist = read_blacklist($config['blocked']);
-	$delta_t = 60*5;
 
 	if (!isset($_POST['message'])) {
-		throw new Exception('Keine Nachricht!', 5);
+		throw new Exception('Keine Nachricht!');
 	}
-	if ($_POST['antispam'] != md5($message . ceil(time() / $delta_t))) { // check hash
-		throw new Exception('Willst du mich bescheissen? Bitte aktiviere Javascript!', 1);
+	if ($message == $config['default']) {
+		throw new Exception('Der Standart ist doch langweilig!');
+	}
+	if ($_POST['antispam'] != md5($message . ceil(time() / $config['delta']))) { // check hash
+		throw new Exception('Willst du mich bescheissen? Bitte aktiviere Javascript!');
 	}
 	if (strlen($message) > 160) {
 		throw new Exception('Deine Nachricht ist zu lang!');
 	}
 	if ($balance['CurrentBalance']['TotalIncludingVat'] < $config['reserve']) {
-		throw new Exception('Sorry, aber ich habe kein Gutenhaben mehr!', 2);
+		throw new Exception('Sorry, aber ich habe kein Gutenhaben mehr!');
 	}
 	if ($time = is_blacklisted($blacklist, $_SERVER['REMOTE_ADDR'])) {
-		throw new Exception('Sorry, du musst ' . format_duration($config['blocked'] - (time() - $time)) . ' warten, bevor du die nächste SMS versenden kannst!', 3);
+		throw new Exception('Sorry, du musst ' . format_duration($config['blocked'] - (time() - $time)) . ' warten, bevor du die nächste SMS versenden kannst!');
 	}
 	
-	//$sipgate->sendSMS($recipient'], $message, NULL, $config['recipient']);
+	$sipgate->sendSMS($config['recipient'], $message, NULL, $config['recipient']);
+	$balance = $sipgate->getBalance();
 	echo '<h3>SMS wurde gesendet!</h3><p>Vielen Dank :)</p>';
-	echo '<p>Du kannst deine n&auml:chste SMS in ' . format_duration($config['blocked']) . ' senden!</p>';
-	echo '<p>Verbleibendes Guthaben: ' . round($balance['CurrentBalance']['TotalIncludingVat'], 2) . ' ' . $balance['CurrentBalance']['Currency'] . ' (das sind noch ' . floor(($balance['CurrentBalance']['TotalIncludingVat'] - $config['reserve']) / 0.079) . ' SMS)</p>';
+	echo '<p>Du kannst deine n&auml;chste SMS in ' . format_duration($config['blocked']) . ' senden!</p>';
+	echo '<p>Verbleibendes Guthaben: ' . round($balance['CurrentBalance']['TotalIncludingVat']) . ' ' . $balance['CurrentBalance']['Currency'] . ' (das sind noch ' . floor(($balance['CurrentBalance']['TotalIncludingVat'] - $config['reserve']) / 0.079) . ' SMS)</p>';
 
 	if ($_SERVER['REMOTE_ADDR'] != '172.0.0.1') $blacklist[] = array($_SERVER['REMOTE_ADDR'], time());
 	
@@ -61,29 +69,23 @@ else {
 
 function show_form() {
 	global $config;
-	$message =  (isset($_REQUEST['message'])) ? $_REQUEST['message'] : '';
+	$message =  (isset($_REQUEST['message'])) ? $_REQUEST['message'] : $config['default'];
 
-	echo '<form name="sms" onsubmit="send(this);" action="' . $_SERVER['PHP_SELF'] . '" method="post">
+	echo '<form name="sms_frm" onsubmit="send(this);" action="' . $_SERVER['PHP_SELF'] . '" method="post">
 		<table>
-			<tr><td>An:</td><td>++' . $config['recipient'] . '</td></tr>
-			<tr><td>Nachricht:</td><td><textarea onfocus="update_length(this);" onkeyup="update_length(this);" name="message" cols="40" rows="5">' . $message . '</textarea></td></tr>
-			<tr><td>Zeichen:</td><td><span id="length">' . strlen($message) . '</span> (&uuml;brig: <span id="left" style="color: green;">' . (160 - strlen($message)) . '</span>)</td></tr>
+			<tr><td><span class="head">An:</span> <span id="number">++' . $config['recipient'] . '</span></td></tr>
+			<tr><td><textarea onfocus="update_length(this);" onkeyup="update_length(this);" name="message" cols="40" rows="5">' . $message . '</textarea></td></tr>
+			<tr><td><span class="head">Zeichen:</span> <span id="length">' . strlen($message) . '</span> (&uuml;brig: <span id="left" style="color: green;">' . (160 - strlen($message)) . '</span>)</td></tr>
 		</table>
 		<input type="hidden" name="antispam" />
-		<input type="submit" value="abschicken" />
+		<input id="send_btn" type="submit" value="abschicken" />
 	</form>';
 }
 
 function format_duration($time) {
-	if ($time < 60) {
-		return $time . ' Sekunden';
-	}
-	elseif ($time < 3600) {
-		return floor($time / 60) . ' Minuten';
-	}
-	else {
-		return floor($time / 3600) . ':' . floor(($time % 3600) / 60) . ' Stunden';
-	}
+	if ($time < 60) return $time . ' Sekunden';
+	elseif ($time < 3600) return floor($time / 60) . ' Minuten';
+	else return floor($time / 3600) . ':' . sprintf('%02d', floor(($time % 3600) / 60)) . ' Stunden';
 }
 
 ?>
