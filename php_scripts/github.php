@@ -57,7 +57,7 @@ foreach ($files as $dir) {
 		$request = array(
 			'name' => $repoTitle,
 			'description' => $repoDesc,
-			'public' => in_array($dir, $public),
+			'public' => in_array($dir, $public) || count($public) == 0,
 			'has_issues' => false,
 			'has_wiki' => false
 		);
