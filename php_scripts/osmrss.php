@@ -56,14 +56,14 @@ foreach ($changesets as $changeset) {
 		unset($tag);
 		foreach ($changeset->childNodes as $child) {
 			if (get_class($child) == 'DOMElement') {
-				$tag[$child->getAttribute('k')] = $child->getAttribute('v');
+				$tag[$child->getAttribute('k')] = htmlspecialchars($child->getAttribute('v'));
 			}
 		}
 
 		$ts = strtotime(($changeset->getAttribute('closed_at')) ? $changeset->getAttribute('closed_at') : $changeset->getAttribute('created_at'));
 		$date = date('D, d M Y H:i:s', $ts);
 
-		$item->appendChild($rss->createElement('title', (($changeset->getAttribute('open') == 'true') ? '[Editing] ' : '') . $changeset->getAttribute('user') . (($tag['comment']) ? ': ' . $tag['comment'] : '') . (($tag['created_by']) ? ': ' . $tag['created_by'] : '')));
+		$item->appendChild($rss->createElement('title', (($changeset->getAttribute('open') == 'true') ? '[Editing] ' : '') . $changeset->getAttribute('user') . ((@$tag['comment']) ? ': ' . @$tag['comment'] : '') . (($tag['created_by']) ? ': ' . $tag['created_by'] : '')));
 		$item->appendChild($rss->createElement('link', $browseUrl . $changeset->getAttribute('id')));
 		$item->appendChild($rss->createElement('guid', $apiUrl . '/changeset/' . $changeset->getAttribute('id')));
 		$item->appendChild($rss->createElement('pubDate', $date));
