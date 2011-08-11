@@ -8,7 +8,7 @@ $historyUrl = 'http://openstreetmap.org/history';
 $browseUrl = 'http://openstreetmap.org/browse/changeset/';
 $options = $_SERVER['QUERY_STRING'];
 $bots = array('bot', 'xylome', 'thomas1904');
-$filters = explode(',', $_GET['filter']);
+$filters = explode(',', @$_GET['filter']);
 
 // set tz
 date_default_timezone_set('UTC');
@@ -49,7 +49,7 @@ foreach ($changesets as $changeset) {
 			}
 		}
 	}
-		
+
 	if ($add) {
 		$item = $rss->createElement('item');
 
