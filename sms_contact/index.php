@@ -5,9 +5,9 @@
 <head>
 	<title>Schicke mir eine Kurznachricht</title>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<link rel="stylesheet" type="text/css" href="style.css">
 	<script src="md5.js" type="text/javascript"></script>
 	<script src="sms.js" type="text/javascript"></script>
-	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 	<body onload="parent.document.getElementById('sms_frame').height=document.body.scrollHeight; document.forms.sms_frm.message.focus()">
 		<div id="sms_contact">
