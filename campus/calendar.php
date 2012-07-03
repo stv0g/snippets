@@ -60,22 +60,31 @@ foreach ($headers as $header) {
 		header($key . ': ' . $value);
 }
 
+$location = '';
 $lines = explode("\r\n", $body);
 foreach ($lines as $line) {
-
 	if ($line) {
 		list($key, $value) = explode(":", $line);
-		if  ($key == 'LOCATION') {
-			$room = strtok($value, " ");
-			$address = get_address($db, $room);
+		switch ($key) {
+			case 'LOCATION':
+				$location = $value;
+				$room = strtok($location, " ");
+				$address = get_address($db, $room);
 
-			if ($address === false) {
-				$address = utf8_encode(crawl_address($room));
-				set_address($db, $room, $address);
-				$crawled = true;
-			}
-			$value = $address . ' (' . $value . ')';
+				if ($address === false) {
+					$address = preg_replace('/[ ]{2,}/sm', ' ', utf8_encode(crawl_address($room)));
+					set_address($db, $room, $address);
+					$crawled = true;
+				}
+				$value = $address . ', Aachen';
+				break;
+
+			case 'DESCRIPTION':
+				if ($value) $value .= '\n';
+				$value .= $location;
+				break;
 		}
+
 		echo $key . ':' . $value;
 	}
 	echo "\r\n";
