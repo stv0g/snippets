@@ -13,24 +13,24 @@ h1 {
 }
 
 #content {
-  margin: auto;
-  width: 800px;
-  text-align: center
+	margin: auto;
+	width: 800px;
+	text-align: center
 }
 
 dl {
-  width: 300px;
-  margin: auto;
+	width: 300px;
+	margin: auto;
 }
 dt {
-  float: left;
+	float: left;
 }
 dt a {
-  color: #555
+	color: #555
 }
 dd {
-  text-align: right;
-  padding-bottom: 4px
+	text-align: right;
+	padding-bottom: 4px
 }
 
 table {
@@ -39,8 +39,7 @@ table {
 }
 
 td, th {
-	padding: 2px 5px 2px 5px;
-	border: 1px solid grey;
+	border: 0;
 }
 
 a img {
@@ -48,14 +47,14 @@ a img {
 }
 
 footer {
-  opacity: 0;
-  alpha(opacity=0);
-  display: block;
-  margin-top: 50px;
+	opacity: 0;
+	alpha(opacity=0);
+	display: block;
+	margin-top: 50px;
 }
 iframe{
-  border: 0;
-  height: 300px;
-  width: 700px;
-  margin: 0;
+	border: 0;
+	height: 300px;
+	width: 700px;
+	margin: 0;
 }

@@ -142,7 +142,6 @@ echo '<?xml version="1.0" ?>';
 
 <iframe name="ifr" id="ifr"></iframe>
 
-
 <footer>
   <p>by <a href="http://www.michaschwab.de">Micha Schwab</a> - <a href="http://0l.de/tools/contactimg">help</a></p>
 

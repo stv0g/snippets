@@ -31,6 +31,10 @@ $ghPassword = 'yourpassword';
 
 $files = scandir($rootDir);
 
+if (!isset($_ENV['TERM'])) {
+	die('This script is intended to be used from the command line!');
+}
+
 if (file_exists('gitweb.projects')) {
 	$public = file('gitweb.projects', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 }
