@@ -51,7 +51,7 @@ if ($_POST) {
 	if ($time = is_blacklisted($blacklist, $_SERVER['REMOTE_ADDR'])) {
 		throw new Exception('Sorry, du musst ' . format_duration($config['blocked'] - (time() - $time)) . ' warten, bevor du die nächste SMS versenden kannst!');
 	}
-	
+
 	$sipgate->sendSMS($config['recipient'], $message, NULL, $config['recipient']);
 	$balance = $sipgate->getBalance();
 	echo '<h3>SMS wurde gesendet!</h3><p>Vielen Dank :)</p>';
@@ -60,7 +60,7 @@ if ($_POST) {
 ' . floor(($balance['CurrentBalance']['TotalIncludingVat'] - $config['reserve']) / 0.079) . ' SMS)</p>';
 
 	if ($_SERVER['REMOTE_ADDR'] != '172.0.0.1') $blacklist[] = array($_SERVER['REMOTE_ADDR'], time());
-	
+
 	echo '<p><a href="javascript:history.go(-1)" title="back">zu&uuml;ck</a></p>';
 	write_blacklist($blacklist);
 }
@@ -74,7 +74,7 @@ function show_form() {
 
 	echo '<form name="sms_frm" onsubmit="return send(this);" action="' . $_SERVER['PHP_SELF'] . '" method="post">
 		<table>
-			<!-- <tr><td><span class="head">An:</span> <span id="number">++' . $config['recipient'] . '</span></td></tr> --!>
+			<!-- <tr><td><span class="head">An:</span> <span id="number">++' . $config['recipient'] . '</span></td></tr> -->
 			<tr><td><textarea onfocus="update_length(this);" onkeyup="update_length(this);" name="message" cols="40" rows="5">' . $message . '</textarea></td></tr>
 			<tr><td><span class="head">Zeichen:</span> <span id="length">' . strlen($message) . '</span> (&uuml;brig: <span id="left" style="color: green;">' . (160 - strlen($message)) . '</span>)</td></tr>
 		</table>

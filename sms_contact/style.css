@@ -1,7 +1,7 @@
 html, body  {
 	padding: 0;
 	margin: 0;
-	color: #666666;
+	color: #777;
 }
 
 * {
@@ -22,7 +22,39 @@ span.number {
 
 }
 
+input {
+	-moz-border-bottom-colors: none;
+	-moz-border-image: none;
+	-moz-border-left-colors: none;
+	-moz-border-right-colors: none;
+	-moz-border-top-colors: none;
+	background: -moz-linear-gradient(center top , rgba(255, 255, 255, 0.2) 0%, rgba(0, 0, 0, 0.2) 100%) repeat scroll 0 0 #EEEEEE;
+	border-color: #CCCCCC #AAAAAA #AAAAAA #CCCCCC;
+	border-radius: 3px 3px 3px 3px;
+	border-right: 1px solid #AAAAAA;
+	border-style: solid;
+	border-width: 1px;
+	color: #444444;
+	cursor: pointer;
+	display: inline-block;
+	font-family: "HelveticaNeue","Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-size: 11px;
+	font-weight: bold;
+	line-height: 21px;
+	padding: 4px 12px;
+	text-decoration: none;
+	text-shadow: 0 1px rgba(255, 255, 255, 0.75);
+}
+
 textarea {
+	background: none repeat scroll 0 0 #FFFFFF;
+	border: 1px solid #CCCCCC;
+	border-radius: 2px 2px 2px 2px;
+	color: #777777;
+	display: block;
+	font: 13px "HelveticaNeue","Helvetica Neue",Helvetica,Arial,sans-serif;
+	max-width: 100%;
+	outline: medium none;
+	padding: 6px 4px;
 	width: 165px;
-	height: 165px;
 }
