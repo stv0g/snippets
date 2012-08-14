@@ -1,0 +1,30 @@
+#!/bin/sh
+
+HOME_DIR=/home/stv0g
+HOST=sea
+MAX_SIZE=500 # Mbytes
+
+find $HOME_DIR -type f -size +$(($MAX_SIZE*1024))k > $HOME_DIR/rsync.large.exclude
+
+touch $HOME_DIR/rsync.log
+echo started: $(date) | tee $HOME_DIR/rsync.log
+
+rsync \
+	--human-readable \
+	--exclude-from=$HOME_DIR/rsync.exclude \
+	--exclude-from=$HOME_DIR/rsync.large.exclude \
+	--archive \
+	--xattrs \
+	--delete \
+	--executability \
+	--links \
+	--compress \
+	--progress \
+	--max-size=$MAX_SIZE \
+	$HOME_DIR/ $HOST:$HOME_DIR/backup/ \
+2>&1 | tee -a $HOME_DIR/rsync.log
+
+echo finished: $(date) | tee -a $HOME_DIR/rsync.log
+
+# resync logfile
+scp $HOME_DIR/rsync.log $HOST:$HOME_DIR/backup/
