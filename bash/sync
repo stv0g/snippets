@@ -1,30 +1,88 @@
 #!/bin/sh
+##
+ # rsync backup
+ #
+ # for automated syncronisation of my home directory
+ #
+ # @copyright	2012 Steffen Vogel
+ # @license	http://www.gnu.org/licenses/gpl.txt GNU Public License
+ # @author	Steffen Vogel <info@steffenvogel.de>
+ # @link	http://www.steffenvogel.de
+ ##
+##
+ # This script is free software: you can redistribute it and/or modify
+ # it under the terms of the GNU General Public License as published by
+ # the Free Software Foundation, either version 3 of the License, or
+ # any later version.
+ #
+ # This script is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ # GNU General Public License for more details.
+ #
+ # You should have received a copy of the GNU General Public License
+ # along with this script. If not, see <http://www.gnu.org/licenses/>.
+ ##
 
-HOME_DIR=/home/stv0g
 HOST=sea
 MAX_SIZE=500 # Mbytes
+NICENESS=10
+INTERVAL=30 # minutes
 
-find $HOME_DIR -type f -size +$(($MAX_SIZE*1024))k > $HOME_DIR/rsync.large.exclude
+# Exclude files bigger than MAX_SIZE
+find $HOME -type f -size +$(($MAX_SIZE*1024))k > $HOME/rsync.large.exclude
 
-touch $HOME_DIR/rsync.log
-echo started: $(date) | tee $HOME_DIR/rsync.log
 
+# Start logfile
+touch $HOME/rsync.log
+echo started: $(date) | tee $HOME/rsync.log
+
+# Notify
+if [ -x /usr/bin/notify-send ]; then
+	notify-send \
+		-h int:transient:1 \
+		-a "rsync" \
+		-c "transfer" \
+		-i "/usr/share/icons/gnome/256x256/actions/appointment.png" \
+		-u low -t 1000 \
+		"Syncronization started" "excluding:\n$(cat ~/*.exclude)"
+fi
+
+
+/usr/bin/time \
+	-a -o $HOME/rsync.log \
+	-f "secs elapsed: %e" \
+nice \
+	-n ${NICENESS} \
 rsync \
 	--human-readable \
-	--exclude-from=$HOME_DIR/rsync.exclude \
-	--exclude-from=$HOME_DIR/rsync.large.exclude \
+	--exclude-from=$HOME/rsync.exclude \
+	--exclude-from=$HOME/rsync.large.exclude \
 	--archive \
 	--xattrs \
 	--delete \
 	--executability \
 	--links \
 	--compress \
-	--progress \
-	--max-size=$MAX_SIZE \
-	$HOME_DIR/ $HOST:$HOME_DIR/backup/ \
-2>&1 | tee -a $HOME_DIR/rsync.log
+	--progress --stats \
+	$HOME/ $HOST:$HOME/backup/ \
+2>&1 | tee -a $HOME/rsync.log
 
-echo finished: $(date) | tee -a $HOME_DIR/rsync.log
+echo finished: $(date) | tee -a $HOME/rsync.log
 
-# resync logfile
-scp $HOME_DIR/rsync.log $HOST:$HOME_DIR/backup/
+# Resync logfile
+scp $HOME/rsync.log $HOST:$HOME/backup/
+
+# Notify
+if [ -x /usr/bin/notify-send ]; then
+	notify-send \
+		-h int:transient:1 \
+		-a "rsync" \
+		-c "transfer.complete" \
+		-i "/usr/share/icons/gnome/256x256/actions/appointment.png" \
+		-u low -t 2000 \
+		"Syncronisation comppleted" "$(tail -n16 ~/rsync.log)"
+fi
+
+# Queue next run
+echo "bash $0" | at "now + ${INTERVAL} minutes"
