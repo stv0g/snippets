@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 
-//#define DEBUG
+#define DEBUG
 
 #include "ndame.h"
 
@@ -20,6 +20,10 @@ NDame::NDame(int n) {
 }
 
 void NDame::Run() {
+#ifdef DEBUG
+	int sol_count = 0;
+#endif /* DEBUG */
+
 	while (row < n) {
 		while (col < n) {
 			if (Check(row, col) && col > set[row]) {
@@ -39,21 +43,24 @@ void NDame::Run() {
 
 			}
 		}
-		
+
 		if (col == n) {
-			if (set[row - 1] >= n -1 && row == 0)
+			if (set[row - 1] >= n-1 && row == 0) {
 				break;
-			else
+			}
+			else {
 				Backtrack();
-		} else {
+			}
+		}
+		else {
 			row++;
 			col = 0;
 
 			if (row == n) {
 #ifdef DEBUG
-				std::cout << "New Solution: Nr. " << sol_count << std::endl;
+				std::cout << "New Solution: Nr. " << sol_count++ << std::endl;
 #endif /* DEBUG */
-				
+
 				solutions.push_back(set);
 				Backtrack();
 			}
@@ -64,6 +71,21 @@ void NDame::Run() {
 
 		}
 	}
+}
+
+void NDame::Backtrack() {
+#ifdef DEBUG
+	std::cout << "Backtrack: we will reject dame " << row - 1 << "|" << set[row - 1] << std::endl;
+#endif /* DEBUG */
+
+	col = set[row - 1] + 1;
+	UnSet(row - 1, set[row - 1]);
+
+#ifdef DEBUG
+	Show(&set);
+#endif /* DEBUG */
+
+	row--;
 }
 
 bool NDame::Check(int row, int col) {
@@ -140,16 +162,23 @@ void NDame::Show(const std::vector<int> *p) {
 
 int main(int argc, char* argv[]) {
 	if (argc >= 2) {
-		//std::cout << "Berechne das n-Damenproblem für " << argv[1] << " Damen" << std::endl;
+
+#ifdef DEBUG
+		std::cout << "Berechne das n-Damenproblem für " << argv[1] << " Damen" << std::endl;
+#endif /* DEBUG */
+
 		NDame dame(atoi(argv[1]));
 		dame.Run();
-		
+
 		dame.ShowSolutions();
-		
-		//std::cout << dame.solutions.size() << " Lösungen" << std::endl;
-		
-		if (argc == 3) 
+
+#ifdef DEBUG
+		std::cout << dame.solutions.size() << " Lösungen" << std::endl;
+#endif /* DEBUG */
+
+		if (argc == 3) {
 			dame.Show(&dame.solutions.at(atoi(argv[2]) - 1));
+		}
 	} else {
 		std::cout << "Bitte geben Sie einen Paramenter an!" << std::endl;
 	}
@@ -163,20 +192,4 @@ void NDame::ShowSolutions() {
 		if (*i != solutions.back())
 			std::cout << std::endl;
 	}
-}
-
-void NDame::Backtrack() {
-	
-#ifdef DEBUG
-	std::cout << "Backtrack: we will reject dame " << row - 1 << "|" << set[row - 1] << std::endl;
-#endif /* DEBUG */
-
-	col = set[row - 1] + 1;
-	UnSet(row - 1, set[row - 1]);
-
-#ifdef DEBUG
-	Show(&set);
-#endif /* DEBUG */
-
-	row--;
 }
