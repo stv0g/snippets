@@ -1,42 +1,44 @@
 <?php
 
-if ($_REQUEST['router_addr'] and $_REQUEST['mac_addr'] and $_REQUEST['port']) {
-     if ($fp = fsockopen($_REQUEST['router_addr'], $_REQUEST['port'], $errno, $errstr, 4)) {
-          //erlaubte Zeichen:
-          $hexchars = array("0","1","2","3","4","5","6","7","8","9",
-          "A","B","C","D","E","F",
-          "a","b","c","d","e","f"
-          );
+if ($_POST) {
+	if ($_POST['router_addr'] and $_POST['mac_addr'] and $_POST['port']) {
+		if ($fp = fsockopen($_POST['router_addr'], $_POST['port'], $errno, $errstr, 4)) {
+			//erlaubte Zeichen:
+			$hexchars = array("0","1","2","3","4","5","6","7","8","9",
+				"A","B","C","D","E","F",
+				"a","b","c","d","e","f"
+			);
 
+			// 6 "volle" bytes (Also mit Wert 255 bzw. FF in hexadezimal)
+			$data = "\xFF\xFF\xFF\xFF\xFF\xFF";
+			$hexmac = "";
 
-     // 6 "volle" bytes (Also mit Wert 255 bzw. FF in hexadezimal)
-     $data = "\xFF\xFF\xFF\xFF\xFF\xFF";
-     $hexmac = "";
+			// Jetzt werden unnütige zeichen in der mac-adresse
+			// entfernt (also z.B. die bindestriche usw.)
+			for ($i = 0; $i < strlen($_REQUEST['mac_addr']); $i++) {
+				if (!in_array(substr($_REQUEST['mac_addr'], $i, 1), $hexchars)) {
+					$_REQUEST['mac_addr'] = str_replace(substr($_REQUEST['mac_addr'], $i, 1), "", $_REQUEST['mac_addr']);
+				}
+			}
 
-     // Jetzt werden unnütige zeichen in der mac-adresse
-     // entfernt (also z.B. die bindestriche usw.)
-     for ($i = 0; $i < strlen($_REQUEST['mac_addr']); $i++) {
-          if (!in_array(substr($_REQUEST['mac_addr'], $i, 1), $hexchars)) {
-               $_REQUEST['mac_addr'] = str_replace(substr($_REQUEST['mac_addr'], $i, 1), "", $_REQUEST['mac_addr']);
-               }
-          }
+			for ($i = 0; $i < 12; $i += 2) {
+				$hexmac .= chr(hexdec(substr($_REQUEST['mac_addr'], $i, 2)));
+			}
 
-     for ($i = 0; $i < 12; $i += 2) {
-          $hexmac .= chr(hexdec(substr($_REQUEST['mac_addr'], $i, 2)));
-          }
+			// Hexadresse wird 16mal hintereinandergeschrieben
+			for ($i = 0; $i < 16; $i++) {
+				$data .= $hexmac;
+			}
 
-     // Hexadresse wird 16mal hintereinandergeschrieben
-     for ($i = 0; $i < 16; $i++) {
-          $data .= $hexmac;
-          }
-     fputs($fp, $data);
-     fclose($fp);
-     return true;
-     }
+			fputs($fp, $data);
+			fclose($fp);
+		}
+	}
+	else {
+		die('Bitte geben Sie Daten ein!');
+	}
 }
 else {
-	echo 'Bitte geben Sie Daten ein!';
-}
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -48,9 +50,15 @@ else {
     </head>
     <body>
 <form name="WOL" method="post" action="<?php print $_SERVER['PHP_SELF']; ?>">
-IP oder FQHN: <input type="text" name="router_addr" size="30"><br>
-MAC-Adresse: <input type="text" name="mac_addr" size="17" maxlength="17"><br>
-Port: <input type="text" name="port" size="5" maxlength="5"><br>
-<input type="submit" name="Abschicken" value="Aufwecken">
+<table>
+	<tr><td>IP oder FQHN:</td><td><input type="text" name="router_addr" size="30"></td></tr>
+	<tr><td>MAC-Adresse:</td><td><input type="text" name="mac_addr" size="30" maxlength="17"></td></tr>
+	<tr><td>Port:</td><td><input type="text" name="port" size="30" maxlength="5"></td></tr>
+	<tr><td><input type="submit" name="Abschicken" value="Aufwecken"></td></tr>
+</table>
 </form>
 </body>
+
+<?php
+}
+?>
