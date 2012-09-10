@@ -9,10 +9,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$body = file_get_contents('php://input');
 	$json = json_decode($body, true);
 
-	file_put_contents('aws.log', print_r($headers, true) . "\r\n", FILE_APPEND);
-	file_put_contents('aws.log', print_r($body, true) . "\r\n", FILE_APPEND);
-	file_put_contents('aws.log', print_r($json, true) . "\r\n", FILE_APPEND);
-
 	switch ($headers['x-amz-sns-message-type']) {
 		case 'SubscriptionConfirmation':
 			fopen($json['SubscribeURL'], 'r');
@@ -25,10 +21,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 			if ($balance < $config['reserve']) {
 				header("HTTP/1.0 402 Payment Required");
-				die();
 			}
-
-			$sipgate->sendSMS($config['recipient'], $message, NULL, $config['recipient']);
+			else {
+				$sipgate->sendSMS($config['recipient'], $message, NULL, $config['recipient']);
+			}
 			break;
 
 		default:
