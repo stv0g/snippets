@@ -26,9 +26,7 @@ function addHtmlProperly(element, html)
 }
 
 window.onload = function()
-{
-  document.getElementById('focus').focus();
-  
+{  
   document.getElementsByTagName('iframe')[0].style.height = 0;
   document.forms.base.onsubmit = checkFormFinished;
 }
