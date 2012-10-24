@@ -133,8 +133,8 @@ if (isset($matrnr) && isset($passwd)) {
 
 	/* request calendar */
 	$calParams = array(
-		'startdt'	=> strftime('%d.%m.%Y'),
-		'enddt'		=> strftime('%d.%m.%Y', time() + 6*31*24*60*60) /* halbes Jahr == ein Semester */
+		'startdt'	=> strftime('%d.%m.%Y', time() - 7*24*60*60), /* eine Woche Vergangenheit */
+		'enddt'		=> strftime('%d.%m.%Y', time() + 6*31*24*60*60) /* halbes Jahr ZUukunft */
 	);
 
 	$response = curl_request('GET', $baseUrl . $calPath, $cookieFile, $calParams);
