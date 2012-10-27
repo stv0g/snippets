@@ -97,6 +97,15 @@ function error() {
 		</html>';
 	die();
 }
+function getRoom($location) {
+
+	preg_match("/^([0-9]*)\|(.*)/s", $location, $room);
+	if(preg_match("(\(.*\))",$location[2]), $reg) {
+		return $reg[1];
+	}else {
+		return $location[2];
+	}
+}
 
 /* Code */
 if (!empty($_GET['hash'])) {
@@ -166,16 +175,25 @@ if (isset($matrnr) && isset($passwd)) {
 	}
 
 	$location = '';
+
 	$lines = explode("\r\n", $body);
 	foreach ($lines as $line) {
 		if ($line) {
+			$event = '';
+			$address = '';
+			$categories = '';
 			list($key, $value) = explode(":", $line);
 			switch ($key) {
 				case 'END':
 					if ($value == 'VEVENT') flush();
 					unset($location);
 					break;
-
+				case 'SUMMARY':
+					$event = $value;
+				break;
+				case 'CATEGORIES':
+					$categories = $value;
+				break;
 				case 'LOCATION':
 					$location = $value;
 					$room = strtok($location, " ");
@@ -186,11 +204,14 @@ if (isset($matrnr) && isset($passwd)) {
 						set_address($db, $room, $address);
 						$crawled = true;
 					}
-					$value = $address . ', Aachen';
+					$value = getRoom($location) . ', ' . $address . ', Aachen';
 					break;
 
 				case 'DESCRIPTION':
-					if ($value) $value .= '\n';
+					if ($value) $value .= '\n'; 
+					$value .= $event . '\n';
+					$value .= $categories . '\n';
+					$value .= $adress . '\n';
 					$value .= $location;
 					break;
 			}
