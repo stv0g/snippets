@@ -77,7 +77,15 @@ function crawl_address($room) {
 
 	return ($r > 0) ? $matches[1] : false;
 }
+function getRoom($location) {
 
+	list($building, $room) = explode("|", $location);
+	if(preg_match("/\((.*)\)/s",$room, $reg)) {
+		return $reg[1];
+	}else {
+		return $room;
+	}
+}
 function error() {
 	global $scriptUrl;
 
@@ -96,15 +104,6 @@ function error() {
 			</body>
 		</html>';
 	die();
-}
-function getRoom($location) {
-
-	preg_match("/^([0-9]*)\|(.*)/s", $location, $room);
-	if(preg_match("(\(.*\))",$location[2]), $reg) {
-		return $reg[1];
-	}else {
-		return $location[2];
-	}
 }
 
 /* Code */
@@ -175,13 +174,14 @@ if (isset($matrnr) && isset($passwd)) {
 	}
 
 	$location = '';
+	$event = '';
+	$address = '';
+	$categories = '';
 
 	$lines = explode("\r\n", $body);
 	foreach ($lines as $line) {
 		if ($line) {
-			$event = '';
-			$address = '';
-			$categories = '';
+
 			list($key, $value) = explode(":", $line);
 			switch ($key) {
 				case 'END':
@@ -211,7 +211,7 @@ if (isset($matrnr) && isset($passwd)) {
 					if ($value) $value .= '\n'; 
 					$value .= $event . '\n';
 					$value .= $categories . '\n';
-					$value .= $adress . '\n';
+					$value .= $address . '\n';
 					$value .= $location;
 					break;
 			}
