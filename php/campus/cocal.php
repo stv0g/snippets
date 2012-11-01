@@ -7,7 +7,7 @@ $homePath = 'office/default.asp';
 $loginPath = 'office/views/campus/redirect.asp';
 $calPath = 'office/views/calendar/iCalExport.asp';
 $logoutPath = 'office/system/login/logoff.asp';
-$roomPath = 'rwth/all/room.asp'
+$roomPath = 'rwth/all/room.asp';
 
 /* Functions */
 function curl_fixcookie($cookieFile) {
@@ -61,44 +61,47 @@ function curl_request($method, $url, $cookieFile = false, $params = array()) {
 }
 
 function get_address($db, $room) {
-	$result = sqlite_query($db, 'SELECT address FROM rooms WHERE id = "' . sqlite_escape_string($room). '";');
-	return ($result && sqlite_valid($result)) ? sqlite_fetch_array($result) : false;
+	return $db->querySingle('SELECT * FROM rooms WHERE id = "' . $db->escapeString($room). '";', true);
 }
 
 function set_address($db, $room, $address) {
-	sqlite_exec($db, 'INSERT OR REPLACE INTO rooms VALUES (
-				"' . sqlite_escape_string($address['id']) . '",
-				"' . sqlite_escape_string($address['address']) . '",
-				"' . sqlite_escape_string($address['cluster']) . '",
-				"' . sqlite_escape_string($address['building']) . '",
-				"' . sqlite_escape_string($address['building_no']) . '",
-				"' . sqlite_escape_string($address['room']) . '",
-				"' . sqlite_escape_string($address['room_no']) . '",
-				"' . sqlite_escape_string($address['floor']) . '"
-			);', $error);
+	$db->exec('INSERT OR REPLACE INTO rooms VALUES (
+			"' . $db->escapeString($room) . '",
+			"' . $db->escapeString(@$address['address']) . '",
+			"' . $db->escapeString(@$address['cluster']) . '",
+			"' . $db->escapeString(@$address['building']) . '",
+			"' . $db->escapeString(@$address['building_no']) . '",
+			"' . $db->escapeString(@$address['room']) . '",
+			"' . $db->escapeString(@$address['room_no']) . '",
+			"' . $db->escapeString(@$address['floor']) . '"
+		);');
 }
 
 function crawl_address($room) {
-	$response = curl_request('GET', $basePath . $roomPath . '?room=' . urlencode($room));
+	global $baseUrl, $roomPath;
 
 	$matches = array();
-	preg_match("/<td class=\"default\">H.rsaalgruppe<\/td><td class=\"default\">(?P<cluster>[^<]*)<\/td>/", $response, $matches);
-	preg_match("/<td class=\"default\">Geb.udeanschrift<\/td><td class=\"default\">(?P<address>[^<]*)<\/td>/", $response, $matches);
-	preg_match("/<td class=\"default\">Geb.udebezeichnung<\/td><td class=\"default\">(?P<building>[^<]*)<\/td>/", $response, $matches);
-	preg_match("/<td class=\"default\">Geb.udenummer<\/td><td class=\"default\">(?P<building_no>[^<]*)<\/td>/", $response, $matches);
-	preg_match("/<td class=\"default\">Raumname<\/td><td class=\"default\">(?P<room>[^<]*)<\/td>/", $response, $matches);
-	preg_match("/<td class=\"default\">Raumnummer<\/td><td class=\"default\">(?P<room_no>[^<]*)<\/td>/", $response, $matches);
-	preg_match("/<td class=\"default\">Geschoss<\/td><td class=\"default\">(?P<floor>[^<]*)<\/td>/", $response, $matches);
+	$response = curl_request('GET', $baseUrl . $roomPath . '?room=' . urlencode($room));
 
-	foreach ($matches as $key => $value) {
-		if (is_numeric($key) unset($matches[$key]);
+	$infos = array(
+		'cluster' => 'H.rsaalgruppe',
+		'address' => 'Geb.udeanschrift',
+		'building' => 'Geb.udebezeichung',
+		'building_no' => 'Geb.udenummer',
+		'room' => 'Raumname',
+		'room_no' => 'Raumnummer',
+		'floor' => 'Geschoss'
+	);
+
+	foreach ($infos as $index => $pattern) {
+		$match = array();
+
+		if (preg_match('/<td class="default">' . $pattern . '<\/td><td class="default">([^<]*)<\/td>/', $response, $match)) {
+			$matches[$index] = preg_replace('/[ ]{2,}/sm', ' ', utf8_encode($match[1]));
+		}
 	}
 
-	array_walk($matches, function ($value) {
-		return preg_replace('/[ ]{2,}/sm', ' ', utf8_encode($value));
-	});
-
-	return (count($matches['address']) ? $matches : false;
+	return (count($matches)) ? $matches : false;
 }
 
 function error() {
@@ -135,13 +138,15 @@ else if (!empty($_GET['u']) && !empty($_GET['p'])) {
 
 if (isset($matrnr) && isset($passwd)) {
 	/* perform login to get session cookie */
-	$cookieFile = tempnam('/tmp', 'campus_');
+	$cookieFile = tempnam(sys_get_temp_dir(), 'campus_');
 
 	/* open database */
-	$db = sqlite_open('cocal.db');
-	$result = sqlite_query($db, "SELECT name FROM sqlite_master WHERE type='table' AND name='rooms';");
-	if (!sqlite_valid($result)) {
-		sqlite_exec($db, 'CREATE TABLE rooms (name VARCHAR(255), address VARCHAR(255));');
+	$db = new SQLite3('cocal.db', SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
+
+	/* check schema */
+	$result = $db->querySingle('SELECT name FROM sqlite_master WHERE type="table" AND name="rooms";');
+	if (!$result) {
+		$db->exec('create table rooms (id VARCHAR(255) PRIMARY KEY, address VARCHAR(255), cluster VARCHAR(255), building VARCHAR(255), building_no INTEGER, room VARCHAR(255), room_no INTEGER, floor VARCHAR(255));');
 	}
 
 	curl_request('GET', $baseUrl . $homePath, $cookieFile);
@@ -188,7 +193,7 @@ if (isset($matrnr) && isset($passwd)) {
 		}
 	}
 
-	$location = '';
+	$address = array();
 	$lines = explode("\r\n", $body);
 	foreach ($lines as $line) {
 		if ($line) {
@@ -196,38 +201,60 @@ if (isset($matrnr) && isset($passwd)) {
 			switch ($key) {
 				case 'END':
 					if ($value == 'VEVENT') flush();
-					unset($location);
+					$address = array();
 					break;
 
 				case 'LOCATION':
-					$location = $value;
-					$room = strtok($location, " ");
-					$address = get_address($db, $room);
+					$matches = array();
+					if (preg_match('/^([0-9]+\|[0-9]+) /', $value, $matches)) {
+						$room = $matches[1];
+						$address = get_address($db, $room);
 
-					if ($address === false) {
-						$crawled = crawl_address($room);
-						set_address($db, $room, $address);
-					}
+						if (empty($address)) {
+							$address = crawl_address($room);
+							set_address($db, $room, $address);
+						}
 
-					if ($address) {
-						$value = $address['address'] . ', Aachen';
+						if (isset($address['address'])) {
+							$value = $address['address'] . ', Aachen';
+						}
 					}
 					break;
 
 				case 'DESCRIPTION':
-					if ($value) $value .= '\n';
-					$value .= $location;
+					$additional = $value;
+					$value = '';
+
+					if (@$address['building_no'] && @$address['room_no'])
+						$value .= '\n' . $address['building_no'] . '|' . $address['room_no'];
+
+					if (@$address['room'])
+						$value .= ' ' . $address['room'];
+
+					if (@$address['building'])
+						$value .= '\n' . 'Gebäude: ' . $address['building'];
+
+					if (@$address['floor'])
+						$value .= '\n' . 'Geschoss: ' . $address['floor'];
+
+					if (@$address['cluster'])
+						$value .= '\n' . 'Campus: ' . preg_replace('/^Campus /', '', $address['cluster']);
+
+					if ($additional && $additional != 'Kommentar')
+						$value .= '\n' . $additional;
+
+					$value = preg_replace('/^\\\n/', '', $value);
+
 					break;
 			}
-
-			echo $key . ':' . $value;
+			echo $key . ':' . trim($value);
 		}
 		echo "\r\n";
 	}
 
 	/* cleanup */
 	unlink($cookieFile);
-	sqlite_close($db);
+	$db->close();
 }
 else {
 	echo '<?xml version="1.0" ?>';
@@ -237,9 +264,9 @@ else {
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 	<title>/dev/nulll - CampusOffice to Google Sync</title>
-	<script src="jquery-1.7.2.min.js" type="text/javascript"></script>
-	<script src="scripts.js" type="text/javascript"></script>
-	<script src="base64.js" type="text/javascript"></script>
+	<script src="../jquery-1.7.2.min.js" type="text/javascript"></script>
+	<script src="../scripts.js" type="text/javascript"></script>
+	<script src="../base64.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		function unique(length) {
 			var chars = "0123456789abcdefghiklmnopqrstuvwxyz";
@@ -283,7 +310,7 @@ else {
 			});
 		}
 	</script>
-	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" type="text/css" href="../style.css">
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 	<link rel="shortcut icon" href="/favicon.png" type="image/png">
 	<link rel="icon" href="/favicon.png" type="image/png">
