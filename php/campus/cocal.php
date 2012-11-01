@@ -1,13 +1,13 @@
 <?php
 
 /* Constants */
-$salt = '8D896ww348lDSd1';
 $scriptUrl = ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['SERVER_NAME'] . $_SERVER['PHP_SELF'];
-$baseUrl = 'https://www.campus.rwth-aachen.de/office/';
-$homePath = 'default.asp';
-$loginPath = 'views/campus/redirect.asp';
-$calPath = 'views/calendar/iCalExport.asp';
-$logoutPath = 'system/login/logoff.asp';
+$baseUrl = 'https://www.campus.rwth-aachen.de/';
+$homePath = 'office/default.asp';
+$loginPath = 'office/views/campus/redirect.asp';
+$calPath = 'office/views/calendar/iCalExport.asp';
+$logoutPath = 'office/system/login/logoff.asp';
+$roomPath = 'rwth/all/room.asp'
 
 /* Functions */
 function curl_fixcookie($cookieFile) {
@@ -61,21 +61,44 @@ function curl_request($method, $url, $cookieFile = false, $params = array()) {
 }
 
 function get_address($db, $room) {
-	$result = sqlite_query($db, 'SELECT address FROM rooms WHERE name = "' . sqlite_escape_string($room). '";');
-	return ($result && sqlite_valid($result)) ? sqlite_fetch_string($result) : false;
+	$result = sqlite_query($db, 'SELECT address FROM rooms WHERE id = "' . sqlite_escape_string($room). '";');
+	return ($result && sqlite_valid($result)) ? sqlite_fetch_array($result) : false;
 }
 
 function set_address($db, $room, $address) {
-	sqlite_exec($db, 'INSERT INTO rooms VALUES ("' . sqlite_escape_string($room) . '", "' . sqlite_escape_string($address) . '");', $error);
+	sqlite_exec($db, 'INSERT OR REPLACE INTO rooms VALUES (
+				"' . sqlite_escape_string($address['id']) . '",
+				"' . sqlite_escape_string($address['address']) . '",
+				"' . sqlite_escape_string($address['cluster']) . '",
+				"' . sqlite_escape_string($address['building']) . '",
+				"' . sqlite_escape_string($address['building_no']) . '",
+				"' . sqlite_escape_string($address['room']) . '",
+				"' . sqlite_escape_string($address['room_no']) . '",
+				"' . sqlite_escape_string($address['floor']) . '"
+			);', $error);
 }
 
 function crawl_address($room) {
-	$response = curl_request('GET', 'http://www.campus.rwth-aachen.de/rwth/all/room.asp?room=' . urlencode($room));
+	$response = curl_request('GET', $basePath . $roomPath . '?room=' . urlencode($room));
 
 	$matches = array();
-	$r = preg_match("/<td class=\"default\">Geb.udeanschrift<\/td><td class=\"default\">([^<]*)<\/td>/", $response, $matches);
+	preg_match("/<td class=\"default\">H.rsaalgruppe<\/td><td class=\"default\">(?P<cluster>[^<]*)<\/td>/", $response, $matches);
+	preg_match("/<td class=\"default\">Geb.udeanschrift<\/td><td class=\"default\">(?P<address>[^<]*)<\/td>/", $response, $matches);
+	preg_match("/<td class=\"default\">Geb.udebezeichnung<\/td><td class=\"default\">(?P<building>[^<]*)<\/td>/", $response, $matches);
+	preg_match("/<td class=\"default\">Geb.udenummer<\/td><td class=\"default\">(?P<building_no>[^<]*)<\/td>/", $response, $matches);
+	preg_match("/<td class=\"default\">Raumname<\/td><td class=\"default\">(?P<room>[^<]*)<\/td>/", $response, $matches);
+	preg_match("/<td class=\"default\">Raumnummer<\/td><td class=\"default\">(?P<room_no>[^<]*)<\/td>/", $response, $matches);
+	preg_match("/<td class=\"default\">Geschoss<\/td><td class=\"default\">(?P<floor>[^<]*)<\/td>/", $response, $matches);
 
-	return ($r > 0) ? $matches[1] : false;
+	foreach ($matches as $key => $value) {
+		if (is_numeric($key) unset($matches[$key]);
+	}
+
+	array_walk($matches, function ($value) {
+		return preg_replace('/[ ]{2,}/sm', ' ', utf8_encode($value));
+	});
+
+	return (count($matches['address']) ? $matches : false;
 }
 
 function error() {
@@ -182,11 +205,13 @@ if (isset($matrnr) && isset($passwd)) {
 					$address = get_address($db, $room);
 
 					if ($address === false) {
-						$address = preg_replace('/[ ]{2,}/sm', ' ', utf8_encode(crawl_address($room)));
+						$crawled = crawl_address($room);
 						set_address($db, $room, $address);
-						$crawled = true;
 					}
-					$value = $address . ', Aachen';
+
+					if ($address) {
+						$value = $address['address'] . ', Aachen';
+					}
 					break;
 
 				case 'DESCRIPTION':
