@@ -206,7 +206,7 @@ if (isset($matrnr) && isset($passwd)) {
 
 				case 'LOCATION':
 					$matches = array();
-					if (preg_match('/^([0-9]+\|[0-9]+) /', $value, $matches)) {
+					if (preg_match('/^([0-9]+\|[0-9]+)/', $value, $matches)) {
 						$room = $matches[1];
 						$address = get_address($db, $room);
 
@@ -284,6 +284,13 @@ else {
 			var cipher = $('#matrnr').val() + ':' + $('#passwd').val();
 			var link = '<?php echo $scriptUrl ?>?hash=' + Base64.encode(cipher);
 
+			$('#result a').attr('href', link);
+			$('#result a').text(link);
+			$('#result').show(300);
+
+			return;
+
+			/* we dont want to store your credentials ;-) sorry for these ugly links */
 			$.ajax({
 				url : 'http://d.0l.de/add.json',
 				data : {
