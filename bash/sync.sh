@@ -24,10 +24,23 @@
  # along with this script. If not, see <http://www.gnu.org/licenses/>.
  ##
 
+# Hostname or IP address of remote box
 HOST=sea
-MAX_SIZE=500 # Mbytes
+
+# Maximum file size. Larger files will be exluded
+MAX_SIZE=500
+
+# Nice factor for rsync
 NICENESS=10
-INTERVAL=30 # minutes
+
+# Interval in minutes to reschedule this script via at
+# Set to 0 to disable
+INTERVAL=180
+
+# Choose own queue for sync jobs
+# Uppercase letters will at let behave like batch
+QUEUE=S
+
 
 # Exclude files bigger than MAX_SIZE
 find $HOME -type f -size +$(($MAX_SIZE*1024))k > $HOME/rsync.large.exclude
@@ -64,7 +77,8 @@ rsync \
 	--executability \
 	--links \
 	--compress \
-	--progress --stats \
+	--out-format=%f \
+	--stats \
 	$HOME/ $HOST:$HOME/backup/ \
 2>&1 | tee -a $HOME/rsync.log
 
@@ -81,8 +95,16 @@ if [ -x /usr/bin/notify-send ]; then
 		-c "transfer.complete" \
 		-i "/usr/share/icons/gnome/256x256/actions/appointment.png" \
 		-u low -t 2000 \
-		"Syncronisation comppleted" "$(tail -n16 ~/rsync.log)"
+		"Syncronisation completed" "$(tail -n16 ~/rsync.log)"
+fi
+
+# Prune queue
+JOBS=$(atq -q ${QUEUE} | cut -f 1 | xargs)
+if [ -n "${JOBS}" ]; then
+	atrm ${JOBS}
 fi
 
 # Queue next run
-echo "bash $0" | at "now + ${INTERVAL} minutes"
+if [ ${INTERVAL} -ne 0 ]; then
+	echo "bash $0" | at -q ${QUEUE} "now + ${INTERVAL} minutes"
+fi
