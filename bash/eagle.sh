@@ -30,11 +30,17 @@ ARGS=$@
 FILE=$1
 SUF=${FILE##*.}
 
-if [ "$SUF" = "brd" -o "$SUF" = "sch" -o "$SUF" = "epf" ]
-then
+if [ "$SUF" = "brd" -o "$SUF" = "sch" -o "$SUF" = "epf" ]; then
 	FILE=$(readlink -f "$FILE")
 	ARGS=/tmp/eagle.$SUF
+
 	ln -sf "$FILE" "$ARGS"
+
+	if [ "$SUF" = "brd" ]; then
+		ln -sf "${FILE%.*}.sch" /tmp/eagle.sch
+	elif [ "$SUF" = "sch" ]; then
+		ln -sf "${FILE%.*}.brd" /tmp/eagle.brd
+	fi
 fi
 
 LD_LIBRARY_PATH=/opt/libpng14/lib /opt/eagle-6.1.0/bin/eagle $ARGS
