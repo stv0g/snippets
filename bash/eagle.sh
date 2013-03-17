@@ -1,8 +1,12 @@
 #!/bin/bash
 ##
- # Mount MS Sharepoint folders of the RWTH L²P System in gvfs
+ # Startup wrapper to workaround a bug in EAGLE
  #
- # @copyright	2012 Steffen Vogel
+ # Cadsoft EAGLE fails to open filename including whitespaces on linux systems.
+ # This script creates a temporary symlink and redirects the supplied filename to
+ # the temporary one.
+ #
+ # @copyright	2013 Steffen Vogel
  # @license	http://www.gnu.org/licenses/gpl.txt GNU Public License
  # @author	Steffen Vogel <info@steffenvogel.de>
  # @link	http://www.steffenvogel.de/
@@ -22,15 +26,24 @@
  # along with this script. If not, see <http://www.gnu.org/licenses/>.
  ##
 
+ARGS=$@
+FILE=$1
+SUF=${FILE##*.}
 
-// TODO thats just a draft. It's not working yet! Please contact me, if you are interested in this script
+if [ "$SUF" = "brd" -o "$SUF" = "sch" -o "$SUF" = "epf" ]; then
+	FILE=$(readlink -f "$FILE")
+	ARGS=/tmp/eagle.$SUF
 
-// fetch learning rooms
-wget https://www2.elearning.rwth-aachen.de/foyer/summary/default.aspx
+	ln -sf "$FILE" "$ARGS"
 
-// parse urls
+	if [ "$SUF" = "brd" ]; then
+		ln -sf "${FILE%.*}.sch" /tmp/eagle.sch
+	elif [ "$SUF" = "sch" ]; then
+		ln -sf "${FILE%.*}.brd" /tmp/eagle.brd
+	fi
+fi
 
-// remove old urls from .gtk-bookmarks
+LD_LIBRARY_PATH=/opt/eagle/lib/ exec /opt/eagle/6.1.0/bin/eagle $ARGS
+#LD_LIBRARY_PATH=/opt/libpng14/lib /opt/eagle-6.1.0/bin/eagle $ARGS
 
-// append to .gtk-bookmarks
-davs://www2.elearning.rwth-aachen.de/ws10/10ws-09977/materials/documents L²P MMET Projekt
+rm -f /tmp/eagle.*

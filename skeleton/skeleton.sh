@@ -4,7 +4,7 @@
  #
  # Long description
  #
- # @copyright	2012 Steffen Vogel
+ # @copyright	2013 Steffen Vogel
  # @license	http://www.gnu.org/licenses/gpl.txt GNU Public License
  # @author	Steffen Vogel <post@steffenvogel.de>
  # @link	http://www.steffenvogel.de
