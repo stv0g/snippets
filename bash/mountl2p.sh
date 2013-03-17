@@ -67,9 +67,7 @@ fi
 
 # filter by semester
 if [ -z "${SEMESTER}" ]; then
-	SEMESTER="(ss|ws)[0-9]{2}"
-else
-	SEMESTER="(${SEMESTER})"
+	SEMESTER="[sw]s[0-9]{2}"
 fi
 
 # output format
@@ -78,10 +76,10 @@ if [ -z "${FORMAT}" ]; then
 fi
 case ${FORMAT} in
 	fstab)
-		FORMAT="https\://www2.elearning.rwth-aachen.de\1/materials/documents\t/home/${USER}/l2p/\1/\tdavfs\tuser,noauto\t0\t0"
+		FORMAT="https\://www2.elearning.rwth-aachen.de\1/materials/documents\t/home/${USER}/l2p/\2/\3/\tdavfs\tuser,noauto\t0\t0 # \4"
 		;;
 	gvfs)
-		FORMAT="davs\://${L2P_USER}@www2.elearning.rwth-aachen.de\1/materials/documents \4"
+		FORMAT="davs\://${L2P_USER}@www2.elearning.rwth-aachen.de\1/materials/documents L²P\:\2 \4"
 		;;
 	*)
 		echo "invalid format!" >&2
@@ -96,5 +94,5 @@ for SECTION in summary archive; do
 
 	# fetch learning rooms
 	curl -s -u "${L2P_USER}:${L2P_PASS}" "${URL}" | \
-	sed -n -r -e "s:.*<a href=\"(/${SEMESTER}/[0-9]{2}(ss|ws)-[0-9]+)/information/default\.aspx\">([^<]+)</a>.*:${FORMAT}:p"
+	sed -n -r -e "s:.*<a href=\"(/(${SEMESTER})/[0-9]{2}[sw]s-([0-9]+))/information/default\.aspx\">([^<]+)</a>.*:${FORMAT}:p"
 done
