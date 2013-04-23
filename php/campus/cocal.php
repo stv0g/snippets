@@ -326,7 +326,7 @@ else {
 
 <div id="content">
 	<header>
-		<a href="http://0l.de"><img src="http://0l.de/_media/nulll_small.png" alt="0l" /></a>
+		<a href="http://dev.0l.de"><img src="http://dev.0l.de/_media/nulll_small.png" alt="0l" /></a>
 		<h1>CampusOffice to Google Sync</h1>
 	</header>
 
@@ -349,7 +349,7 @@ else {
 	</p>
 
 	<footer>
-		<p>by <a href="http://www.steffenvogel.de">Steffen Vogel</a> - <a href="http://0l.de/tools/campus">help</a></p>
+		<p>by <a href="http://www.steffenvogel.de">Steffen Vogel</a> - <a href="http://dev.0l.de/tools/campus">help</a></p>
 	</footer>
 </div>
 </body>
