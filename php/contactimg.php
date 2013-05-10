@@ -4,17 +4,15 @@ function getExtension($filename) {
 	return strtolower(substr(strrchr($filename,"."),1));
 }
 
-if (!empty($_FILES["contacts"]))
-{
-	$count = count($_FILES["contacts"]["tmp_name"]);	
+if (!empty($_FILES["contacts"])) {
+	$count = count($_FILES["contacts"]["tmp_name"]);
 	$files = array("zip" => array(),
 			"vcf" => array(),
 			"contact" => array());
-	
-	for($i = 0; $i < $count; $i++)
-	{
+
+	for($i = 0; $i < $count; $i++) {
 		$extension = getExtension($_FILES["contacts"]["name"][$i]);
-		
+
 		if($extension == "zip")
 			$files["zip"][] = $i;
 		elseif($extension == "contact")
@@ -22,28 +20,24 @@ if (!empty($_FILES["contacts"]))
 		elseif($extension == "vcf")
 			$files["vcf"][] = $i;
 	}
-	
+
 	$contents["contact"] = array();
 	$contents["vcf"] = array();
-	
-	foreach($files["contact"] as $contactfile)
-	{
+
+	foreach($files["contact"] as $contactfile) {
 		$contents["contact"][] = file_get_contents($_FILES["contacts"]["tmp_name"][$contactfile]);
 	}
 
-	foreach($files["vcf"] as $contactfile)
-        {
+	foreach($files["vcf"] as $contactfile) {
                 $contents["vcf"][] = file_get_contents($_FILES["contacts"]["tmp_name"][$contactfile]);
         }
 
-	
-	foreach($files["zip"] as $zipfile)
-	{
+
+	foreach($files["zip"] as $zipfile) {
 		$zip = new ZipArchive();
 		$zip->open($_FILES["contacts"]["tmp_name"][$zipfile]);
 
-		for ($i = 0; $i < $zip->numFiles; $i++)
-		{
+		for ($i = 0; $i < $zip->numFiles; $i++) {
 			$extension = getExtension($zip->getNameIndex($i));
 
 	                if($extension == "contact")
@@ -51,23 +45,21 @@ if (!empty($_FILES["contacts"]))
                 	elseif($extension == "vcf")
                         	$contents["vcf"][] = $zip->getFromIndex($i);
 		}
-		
+
 		$zip->close();
 	}
-	
+
 	$images = array();
-	
-	foreach($contents["contact"] as $contact)
-	{
+
+	foreach($contents["contact"] as $contact) {
 		$image = array();
 		$image["name"] = preg_replace('=.*?<c:FormattedName>(.*?)</c:FormattedName>.*=si',"\\1", $contact);
 		$image["imgb64"] = preg_replace('=.*?<c:Value c:ContentType\="binary".*?>(.*?)</c:Value>.*=si',"\\1", $contact);
-		
+
 		$images[] = $image;
 	}
 
-	foreach($contents["vcf"] as $vcf)
-        {
+	foreach($contents["vcf"] as $vcf) {
 		preg_match_all('=FN:(.*?)\n=si', $vcf, $names);
 		$count = preg_match_all('=PHOTO.*?:(.*?)\n[A-Z]=si', $vcf, $imgb64s);
 
@@ -75,7 +67,7 @@ if (!empty($_FILES["contacts"]))
 	                $images[] = array("name" => $names[1][$i], "imgb64" => $imgb64s[1][$i]);
 		}
         }
-	
+
 ?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html>
  <head>
@@ -90,8 +82,7 @@ if (!empty($_FILES["contacts"]))
 If you do not have JavaScript, please click "Convert!" again.</p>
 
 <?php
-foreach ($images as $image)
-{ ?>
+foreach ($images as $image) { ?>
 	<textarea name="base64[]" style="display:none"><?php echo $image["imgb64"]; ?></textarea>
 	<input name="names[]" type="text" style="display:none" value="<?php echo $image["name"]; ?>" />
 <?php } ?>
@@ -101,9 +92,9 @@ foreach ($images as $image)
 </form>
 </body>
 </html>
-	
+
 <?php
-	
+
 }
 else
 {
@@ -125,7 +116,7 @@ echo '<?xml version="1.0" ?>';
 	<body><div id="content">
 
 <header>
-  <a href="http://0l.de"><img src="http://0l.de/_media/nulll_small.png" alt="0l" /></a>
+  <a href="http://dev.0l.de"><img src="http://dev.0l.de/_media/nulll_small.png" alt="0l" /></a>
   <h1>Windows Contact to Image Converter</h1>
 </header>
 
@@ -143,7 +134,7 @@ echo '<?xml version="1.0" ?>';
 <iframe name="ifr" id="ifr"></iframe>
 
 <footer>
-  <p>by <a href="http://www.michaschwab.de">Micha Schwab</a> - <a href="http://0l.de/tools/contactimg">help</a></p>
+  <p>by <a href="http://www.michaschwab.de">Micha Schwab</a> - <a href="http://dev.0l.de/tools/contactimg">help</a></p>
 
   <a href="#" onclick="document.getElementById('iPhoneExport').style.display='block'">You can also use this tool to get the contact photos you made with your iPhone</a>
 <div id="iPhoneExport" style="display:none">
