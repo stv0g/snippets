@@ -15,6 +15,8 @@
  #  1. umount -i DEV
  #  2. cryptsetup luksClose UUID
  #
+ # INSTALL:
+ #     place this script in /sbin/mount.luks and make it executable.
  #
  # USAGE:
  #     mount -t luks /dev/sda1 /home
