@@ -6,6 +6,9 @@
  # @license     http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  # @author      Steffen Vogel <post@steffenvogel.de>
  # @link        http://www.steffenvogel.de
+ #
+ # Add this file to /etc/dhcp/dhclient-exit-hooks.d/nsupdate
+ # to update your dns autmatically when you get a new DHCP/IP lease from your ISP
  ##
 ##
  # Licensed under the Apache License, Version 2.0 (the "License");
