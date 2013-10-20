@@ -104,6 +104,7 @@ function crawl_address($room) {
 	return (count($matches)) ? $matches : false;
 }
 
+/* send HTTP 500 for Google to stop fetching */
 function error() {
 	global $scriptUrl;
 
@@ -194,15 +195,23 @@ if (isset($matrnr) && isset($passwd)) {
 	}
 
 	$address = array();
+	$category = '';
 	$lines = explode("\r\n", $body);
 	foreach ($lines as $line) {
 		if ($line) {
 			list($key, $value) = explode(":", $line);
 			switch ($key) {
 				case 'END':
-					if ($value == 'VEVENT') flush();
-					$address = array();
+					if ($value == 'VEVENT') {
+						flush();
+						$address = array();
+						$category = '';
+					}
 					break;
+
+				case 'CATEGORIES':
+					$category = $value;
+					
 
 				case 'LOCATION':
 					$matches = array();
@@ -225,20 +234,20 @@ if (isset($matrnr) && isset($passwd)) {
 					$additional = $value;
 					$value = '';
 
-					if (@$address['building_no'] && @$address['room_no'])
-						$value .= '\n' . $address['building_no'] . '|' . $address['room_no'];
+					if (@$address['building'] || @address['building_no'])
+						$value .= '\nGebäude: ' . $address['building_no'] . ' ' . $address['building'];
 
-					if (@$address['room'])
-						$value .= ' ' . $address['room'];
-
-					if (@$address['building'])
-						$value .= '\n' . 'Gebäude: ' . $address['building'];
+					if (@$address['room'] || @$address['room_no'])
+						$value .= '\nRaum: ' . $address['room_no'] . ' ' . $address['room'];
 
 					if (@$address['floor'])
-						$value .= '\n' . 'Geschoss: ' . $address['floor'];
+						$value .= '\nGeschoss: ' . $address['floor'];
 
 					if (@$address['cluster'])
-						$value .= '\n' . 'Campus: ' . preg_replace('/^Campus /', '', $address['cluster']);
+						$value .= '\nCampus: ' . preg_replace('/^Campus /', '', $address['cluster']);
+						
+					if (@$category)
+						$value .= '\nTyp: ' . $category;
 
 					if ($additional && $additional != 'Kommentar')
 						$value .= '\n' . $additional;
