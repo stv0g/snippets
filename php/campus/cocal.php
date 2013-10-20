@@ -234,7 +234,7 @@ if (isset($matrnr) && isset($passwd)) {
 					$additional = $value;
 					$value = '';
 
-					if (@$address['building'] || @address['building_no'])
+					if (@$address['building'] || @$address['building_no'])
 						$value .= '\nGebäude: ' . $address['building_no'] . ' ' . $address['building'];
 
 					if (@$address['room'] || @$address['room_no'])
