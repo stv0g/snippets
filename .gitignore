@@ -3,3 +3,5 @@
 .project
 .classpath
 
+gc_spider/cookie.txt
+php/campus/cocal.db
