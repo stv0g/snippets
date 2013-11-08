@@ -88,4 +88,4 @@ rsync $OPTS $SRC $DEST/.current/
 btrfs subvolume snapshot -r $DEST/.current $DEST/$DATE
 
 # create symlink to latest snapshot
-ln -sf $DATE latest
+ln -rsfT $DATE latest
