@@ -1,13 +1,14 @@
 #!/bin/bash
 ##
- # Sync with remote server and create btrfs snapshots
+ # Sync with remote server and create Btrfs snapshots
  #
  # This scripts uses rsync to sync remote directories with a local copy
- # After every successful sync a readonly btrfs snapshot of this copy is
+ # After every successful sync a readonly Btrfs snapshot of this copy is
  # created
  #
- # This script requires root privileges! Consider using public key auth-
- # entification with SSH and allow root logins only with a private key:
+ # This script requires root privileges for creating Btrfs snapshots.
+ # Consider using public key authentification with SSH to allow root
+ # logins on remote machines:
  #
  # On remote side:
  #  echo "PermitRootLogin without-password" >> /etc/ssh/sshd_config:
@@ -37,27 +38,54 @@
  ##
 
 function usage {
-        echo "Usage: $(basename $0) REMOTE LOCAL"
+        echo "Usage: $(basename $0) SOURCE DEST"
         echo
-        echo "   REMOTE  a rsync source path/server"
-	echo "   LOCAL   the local destination directory"
+        echo "   SOURCE  a path to the subvolume to backup"
+        echo "   DEST    a path to the backup destination"
         exit 1
 }
 
 set -e
 
 if [ $# -ne 2 ]; then
+	echo -e "invalid args!"
+	echo
         usage
 fi
 
-HOST=$1
-DIR=$2
-
 DATE=$(date +%F_%H-%M-%S)
-EXCLUDE=/dev,/proc,/sys,/tmp,/run,/mnt,/media,/lost+found
+
+SRC=$1
+DEST=$(readlink -f $2)
+
+if ! btrfs sub show $DEST/.current &> /dev/null; then
+	if [ -d $DEST/.current ]; then
+		echo -e "destination directory exists and is not a valid btrfs subvolume!"
+		echo
+		usage
+	else
+		btrfs sub create $DEST/.current
+	fi
+fi
+
+# rsync options
+OPTS="--archive --acls --xattrs"
+OPTS+=" --progress --human-readable"
+OPTS+=" --delete --delete-excluded"
+OPTS+=" --exclude /dev/"
+OPTS+=" --exclude /proc/"
+OPTS+=" --exclude /sys/"
+OPTS+=" --exclude /tmp/"
+OPTS+=" --exclude /run/"
+OPTS+=" --exclude /mnt/"
+OPTS+=" --exclude /media/"
+OPTS+=" --exclude /lost+found/"
 
 # sync with remote
-rsync -aAX --delete root@$HOST:/ $DIR/latest --exclude={$EXCLUDE}
+rsync $OPTS $SRC $DEST/.current/
 
 # create new readonly snapshot
-btrfs subvolume snapshot -r $DIR/latest $DIR/$DATE
+btrfs subvolume snapshot -r $DEST/.current $DEST/$DATE
+
+# create symlink to latest snapshot
+ln -sf $DATE latest
