@@ -58,7 +58,7 @@ done
 
 # prompt for credentials
 if [ -z "${L2P_USER}" ]; then
-	read -p "L2P user: " L2P_USER
+	read -p "user: " L2P_USER
 fi
 
 if [ -z "${L2P_PASS}" ]; then

@@ -25,7 +25,7 @@
  ##
 
 # Hostname or IP address of remote box
-HOST=sea
+HOST=lian
 HOST_REMOTE=lux
 
 # Maximum file size. Larger files will be exluded
