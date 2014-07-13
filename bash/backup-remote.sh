@@ -70,7 +70,7 @@ fi
 
 # rsync options
 OPTS="--archive --acls --xattrs"
-OPTS+=" --progress --human-readable"
+#OPTS+=" --progress --human-readable"
 OPTS+=" --delete --delete-excluded"
 OPTS+=" --exclude /dev/"
 OPTS+=" --exclude /proc/"
@@ -88,4 +88,5 @@ rsync $OPTS $SRC $DEST/.current/
 btrfs subvolume snapshot -r $DEST/.current $DEST/$DATE
 
 # create symlink to latest snapshot
-ln -rsfT $DATE latest
+ln -rsfT $DEST/$DATE $DEST/latest
+
