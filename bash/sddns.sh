@@ -114,34 +114,17 @@ fi
 # parse arguments
 while getopts "z:p:u:t:i:Dhd46" OPT; do
 	case ${OPT} in
-		p)
-			PASS=${OPTARG}
-			;;
-		u)
-			USER=${OPTARG}
-			;;
-		t)
-			TTL=${OPTARG}
-			;;
-		4)
-			VER=4
-			;;
-		6)
-			VER=6
-			;;
-		i)
-			IF=${OPTARG}
-			;;
-		D)
-			DAEMON=1
-			;;
-		d)
-			DEBUG=${OPTARG:-5}
-			;;
+		p) PASS=${OPTARG} ;;
+		u) USER=${OPTARG} ;;
+		t) TTL=${OPTARG} ;;
+		4) VER=4 ;;
+		6) VER=6 ;;
+		i) IF=${OPTARG} ;;
+		D) DAEMON=1 ;;
+		d) DEBUG=${OPTARG:-5} ;;
 		h)
 			usage
-			exit 0
-			;;
+			exit 0 ;;
 		*)
 			usage
 			exit 1

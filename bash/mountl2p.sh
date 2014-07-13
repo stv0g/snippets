@@ -82,8 +82,7 @@ case ${FORMAT} in
 		FORMAT="davs\://${L2P_USER}@www2.elearning.rwth-aachen.de\1/materials/documents L²P\:\2 \4"
 		;;
 	*)
-		echo "invalid format!" >&2
-		echo
+		echo -e "invalid format!"
 		usage
 		exit 1
 esac
