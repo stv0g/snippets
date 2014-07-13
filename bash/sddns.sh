@@ -80,24 +80,21 @@ function update() {
 	WAIT=1
 	URL="http://d.0l.de/update.txt?host=${HOST}&zone=${ZONE}&ttl=${TTL}&class=IN&type=${TYPE}&rdata=${RDATA}&debug=${DEBUG}"
 
-	if (( $DEBUG )); then echo "Updating record: $URL"; fi
-
 	while true; do
-		CODE=$(curl -w %{http_code} -s -o /dev/stderr -u "${USER}:${PASS}" "$URL") 2>&1
+		if (( $DEBUG )); then echo "Updating record: ${URL}"; fi
+		CODE=$(curl -w %{http_code} -s -o /dev/stderr -u "${USER}:${PASS}" "${URL}") 2>&1
 
-		if [ $CODE -eq 0 ]; then
-			if (( $DEBUG )); then echo "Sleeping for ${WAIT} secs..."; fi
-			sleep $WAIT; # wait until interface is ready
-			WAIT=$(($WAIT*2))
-		elif [ $CODE -ge 500 ]; then
-			if (( $DEBUG )); then echo "Request failed. Aborting.."; fi
+		if [ ${CODE} -eq 0 ]; then
+			if (( ${DEBUG} )); then echo "Sleeping for ${WAIT} secs..."; fi
+			sleep ${WAIT} # wait until interface is ready
+			WAIT=$((${WAIT}*2))
+		elif [ ${CODE} -ge 500 ]; then
+			if (( ${DEBUG} )); then echo "Request failed. Aborting.."; fi
 			return 1
 		else
-			break
+			return 0
 		fi
 	done
-
-	return 0
 }
 
 function get() {
