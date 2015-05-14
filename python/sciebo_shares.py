@@ -1,3 +1,9 @@
+# Usage:
+#     python sciebo_shares.py add < ids.txt
+#     python sciebo_shares.py list [admin]
+#     python sciebo_shares.py check
+#
+
 import owncloud
 import requests
 import re
