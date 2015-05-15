@@ -199,8 +199,7 @@ if __name__ == "__main__":
             command = args[0]
         else:
             command = 'list'
-    
-<<<<<<< HEAD
+
         if   command == 'add':
             add_shares(options, oc, shares)
         elif command == 'list':
@@ -210,12 +209,3 @@ if __name__ == "__main__":
         
     except owncloud.ResponseError as e:
         print 'OwnCloud: %s' % e.response.content.strip()
-=======
-    if   command == 'add':
-        add_shares(oc, shares)
-    elif command == 'list':
-        admin = (len(sys.argv) == 3) and (sys.argv[2] == 'admin')
-        list_shares(oc, shares, admin)
-    elif command == 'check':
-        check_shares(oc, shares)
->>>>>>> c849a33e2d76a4349136ab874b977599786789e2
