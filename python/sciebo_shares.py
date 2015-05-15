@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import owncloud
 import requests
 import re
@@ -7,12 +9,13 @@ import urlparse
 
 import xml.etree.ElementTree as ET
 
+from optparse import OptionParser
 from tidylib import tidy_document
 
 PATH = 'Master.ET-IT-TI/'
 USER = ''
 PASS = ''
-OWNCLOUD = 'https://rwth-aachen.sciebo.de'
+URL = 'https://rwth-aachen.sciebo.de'
 
 TITLES = ['Wirt.-Ing.', 'Priv.-Doz.', 'E.h.', 'Ph. D.', 'Univ.', 'habil.', 'Dipl.', 'Prof.', 'Dr', 'Ing', 'rer.', 'dent.', 'paed.', 'nat.', 'phil.', 'Inform.', 'apl', 'Kff.', 'Kfm.', 'med.', 'B. Sc.', 'M. Sc.', 'B. A.', 'M. A.', 'RWTH', 'Chem', ',', '.', '-', '/', '\\']
 WHITELIST = ['Z608AD@rwth-aachen.de', '121EHT@rwth-aachen.de', '6ANU61@rwth-aachen.de', 'FTD971@rwth-aachen.de', 'NB92H4@rwth-aachen.de']
@@ -59,22 +62,25 @@ def get_employees(lastname, firstname):
         document, errors = tidy_document(res.content, options={'numeric-entities': 1, 'output_xhtml': 1})
         tree = ET.fromstring(strip_ns(document))
         
-        filename = posixpath.basename(urlparse.urlsplit(res.url).path)
-        if filename == 'lecturer.asp':
-            fullname = tree.find('body/table[1]/tr[3]//tr[2]/td[2]').text.strip()
-            unit = tree.find("body/table[2]//td[@class='h3']/a").text.strip()
+        try:
+            filename = posixpath.basename(urlparse.urlsplit(res.url).path)
+            if filename == 'lecturer.asp':
+                fullname = tree.find('body/table[1]/tr[3]//tr[2]/td[2]').text.strip()
+                unit = tree.find("body/table[2]//td[@class='h3']/a").text.strip()
             
-            persons.append(fullname)
+                persons.append(fullname)
 
-        elif filename == 'lecturerlist.asp':
-            links = [ ]
-            for cell in tree.findall('body/table[2]//td[3]/table[2]//td[1]/a'):
-                if cell is not None:
-                    fullname = cell.text.strip()
-                    persons.append(fullname)
-        else:
-            raise Exception('Failed to get employee info')
-            
+            elif filename == 'lecturerlist.asp':
+                links = [ ]
+                for cell in tree.findall('body/table[2]//td[3]/table[2]//td[1]/a'):
+                    if cell is not None:
+                        fullname = cell.text.strip()
+                        persons.append(fullname)
+            else:
+                raise Exception
+        except:
+            print "===> WARNING: failed to get employee list for: %s, %s" % (firstname, lastname)
+        
         return persons
 
 def get_share(self, id):
@@ -98,7 +104,7 @@ def get_share(self, id):
     raise ResponseError(res)
 
 
-def add_shares(oc, shares):
+def add_shares(options, oc, shares):
     # Get list of existing shares
     existing = [ ]
     for share in shares:
@@ -115,7 +121,7 @@ def add_shares(oc, shares):
                 continue
 
             try:
-                share = oc.share_file_with_user(PATH, id, perms=oc.OCS_PERMISSION_READ|oc.OCS_PERMISSION_CREATE)
+                share = oc.share_file_with_user(options.path, id, perms=options.perms)
                 details = get_share(oc, share.share_id)
                 
                 match = re.match('([^,]*), ([^(]*) \(', details['share_with_displayname'])
@@ -135,7 +141,7 @@ def add_shares(oc, shares):
             except owncloud.ResponseError as e:
                 print 'Failed to add: %s' % e.response.content.strip()
 
-def check_shares(oc, shares):
+def check_shares(options, oc, shares):
     for share in shares:
         if share['share_with'] in WHITELIST:
             continue
@@ -154,36 +160,52 @@ def check_shares(oc, shares):
         else:
             raise Exception("Failed to match share_id")
         
-def list_shares(oc, shares, admin=False):
+def list_shares(options, oc, shares):
     print "Perm, Name, Added By"
 
     for share in shares:
-        if not admin or share['permissions'] != '5':
+        if int(share['permissions']) >= options.perms:
             if 'displayname_owner' not in share.keys():
                 share['displayname_owner'] = '!!unknown!!'
+            if 'share_with_displayname' not in share.keys():
+                share['share_with_displayname'] = '!!unknown!!'
             
             print "%s%s%s" % (share['permissions'].ljust(3), share['share_with_displayname'].ljust(65).encode('utf-8'), share['displayname_owner'])
 
     print '=== Total: %u' % len(shares)
 
 if __name__ == "__main__":
-    print "### Owncloud / Sciebo share manager"
-
-    oc = owncloud.Client(OWNCLOUD)
-    oc.login(USER, PASS)
-
-    # Get list of already existing IDs
-    shares = oc.get_shares(PATH, reshares=True)
-
-    if len(sys.argv) >= 2:
-        command = sys.argv[1]
-    else:
-        command = 'add'
+    print "## Owncloud / Sciebo share manager v0.1"
+    print
     
-    if   command == 'add':
-        add_shares(oc, shares)
-    elif command == 'list':
-        admin = (len(sys.argv) == 3) and (sys.argv[2] == 'admin')
-        list_shares(oc, shares, admin)
-    elif command == 'check':
-        check_shares(oc, shares)
+    parser = OptionParser(usage="Usage: %prog [options] (list [admin]|add|del|check)")
+    parser.add_option("-P", "--path",  dest="path",  default=PATH, help="path to share", metavar="PATH")
+    parser.add_option("-U", "--url",   dest="url",   default=URL,  help="OwnCloud url", metavar="URL")
+    parser.add_option("-u", "--user",  dest="user",  default=USER, help="OwnCloud username", metavar="USER")
+    parser.add_option("-p", "--pass",  dest="password", default=PASS, help="OwnCloud password", metavar="PASS")
+    parser.add_option("-a", "--perm",  type="int", dest="perms", default=5,    help="for new shares or as filter for list command", metavar="PERM")
+
+    (options, args) = parser.parse_args()
+
+    # Connect
+    try:
+        oc = owncloud.Client(options.url)
+        oc.login(options.user, options.password)
+
+        # Get list of already existing IDs
+        shares = oc.get_shares(options.path, reshares=True)
+
+        if len(args) >= 1:
+            command = args[0]
+        else:
+            command = 'list'
+    
+        if   command == 'add':
+            add_shares(options, oc, shares)
+        elif command == 'list':
+            list_shares(options, oc, shares)
+        elif command == 'check':
+            check_shares(options, oc, shares)
+        
+    except owncloud.ResponseError as e:
+        print 'OwnCloud: %s' % e.response.content.strip()
