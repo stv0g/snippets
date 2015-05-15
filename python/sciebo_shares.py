@@ -145,6 +145,9 @@ def check_shares(options, oc, shares):
     for share in shares:
         if share['share_with'] in WHITELIST:
             continue
+        if 'share_with_displayname' not in share.keys():
+            print '===> ATTENTION: %s has no display name! You should remove it manually!'
+            continue
     
         match = re.match('([^,]*), ([^(]*) \(', share['share_with_displayname'])
         if match:
