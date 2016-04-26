@@ -1,3 +1,6 @@
+-- -------------------------------------------------------------------
+-- Design:
+--
 -- Package for VHDL text output
 --
 -- Note:
@@ -24,10 +27,10 @@
 -- >>	report "DIN = "& str(DIN)& " expected 0101 "  <<
 -- >>	severity Error;  <<
 --
---------------------------------------------------------------------------------
+-- -------------------------------------------------------------------
 
 library ieee;
-	use ieee.std_logic_1164.all;
+    use ieee.std_logic_1164.all;
 
 use std.textio.all;
 
@@ -98,18 +101,24 @@ package txt_util is
 	-----------
 
 	-- read variable length string from input file
-	procedure str_read(file in_file: TEXT;
-						res_string: out string);
+	procedure str_read(
+		file in_file			: TEXT;
+		res_string			: out string
+	);
 
 	-- print string to a file and start new line
-	procedure print(file out_file: TEXT;
-					new_string: in  string);
+	procedure print(
+		file out_file			: TEXT;
+		new_string			: in string
+	);
 
 	-- print character to a file and start new line
-	procedure print(file out_file: TEXT;
-					char:		in  character);
+	procedure print(
+		file out_file			: TEXT;
+		char				: in character
+	);
 
-end txt_util;
+end package;
 
 package body txt_util is
 	-- prints text to the screen
@@ -529,4 +538,4 @@ package body txt_util is
 			end if;
 		end loop;
 	end str_write;
-end txt_util;
+end package body;
