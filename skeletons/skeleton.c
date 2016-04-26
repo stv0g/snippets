@@ -3,7 +3,7 @@
  *
  * Long description
  *
- * @copyright	2013 Steffen Vogel
+ * @copyright	2016 Steffen Vogel
  * @license	http://www.gnu.org/licenses/gpl.txt GNU Public License
  * @author	Steffen Vogel <post@steffenvogel.de>
  * @link	http://www.steffenvogel.de
@@ -26,7 +26,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with [...]. If not, see <http://www.gnu.org/licenses/>.
- */
+ ******************************************************************************/
 
 #include <stdio.h>
 
