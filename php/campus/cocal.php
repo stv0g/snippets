@@ -215,7 +215,7 @@ if (isset($matrnr) && isset($passwd)) {
 
 				case 'LOCATION':
 					$matches = array();
-					if (preg_match('/^([0-9]+\|[0-9]+)/', $value, $matches)) {
+					if (preg_match('/^(([0-9]+\|[0-9]+)(\.[0-9]+)?)/', $value, $matches)) {
 						$room = $matches[1];
 						$address = get_address($db, $room);
 
