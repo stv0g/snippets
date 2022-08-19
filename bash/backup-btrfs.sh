@@ -17,6 +17,8 @@
 
 # TODO: delete old snapshots in source and destination fs
 
+set -e
+
 function usage {
 	echo "Usage: $(basename $0) SOURCE [DEST]"
 	echo
@@ -26,53 +28,55 @@ function usage {
 	exit 1
 }
 
-set -e
-
 if [ $# -lt 1 ]; then
 	echo -e "missing source"
 	echo
 	usage
 fi
 
-SRC=$(readlink -f "$1")
+SRC=$(readlink -e "$1")
+if [ $SRC == "/" ]; then
+	SRC=""
+fi
 
 if [ -h "$SRC/.backup/destination" ]; then
-	DEST=$(readlink -f "$SRC/.backup/destination")
+	DEST=$(readlink -e "$SRC/.backup/destination")
 elif [ $# -ne 2 ] ; then
 	echo -e "missing destination"
 	echo
 	usage
 else
-	DEST=$(readlink -f $2)
-
-	mkdir -p "$SRC/.backup/"
-	mkdir -p "$DEST"
-
-	ln -sf "$DEST" "$SRC/.backup/destination"
-	ln -sf "$SRC" "$DEST/source"
+	DEST=$(readlink -e $2)
 fi
+
+# create directories if not existing
+mkdir -p "$SRC/.backup/"
+mkdir -p "$DEST/"
+
+# create symbolic links if not existing
+ln -snf "$DEST/" "$SRC/.backup/destination"
+ln -snf "$SRC/" "$DEST/source"
 
 # name for the new snapshot
 SNAPSHOT=$(date +%F_%H-%M-%S)
 LATEST="$SRC/.backup/$SNAPSHOT"
 
 # snapshot the current state
-btrfs subvolume snapshot -r "$SRC" "$LATEST"
+btrfs subvolume snapshot -r "$SRC/" "$LATEST/"
 
 # send changes
 if [ -h "$DEST/latest-source" ]; then
-	PREVIOUS=$(readlink -f "$DEST/latest-source")
-	btrfs send -p "$PREVIOUS" "$LATEST" | btrfs receive "$DEST"
+	PREVIOUS=$(readlink -e "$DEST/latest-source")
+	btrfs send -p "$PREVIOUS/" "$LATEST/" | pv | btrfs receive "$DEST/"
 else
-	btrfs send "$LATEST" | btrfs receive "$DEST"
+	btrfs send "$LATEST/" | pv | btrfs receive "$DEST/"
 fi
 
 # delete old snapshot in source fs
 if [ -n "$PREVIOUS" ]; then
-	btrfs subvolume delete "$PREVIOUS"
+	btrfs subvolume delete "$PREVIOUS/"
 fi
 
 # update links to last backup
 ln -rsfT "$DEST/$SNAPSHOT" "$DEST/latest"
 ln -sfT "$LATEST" "$DEST/latest-source"
-

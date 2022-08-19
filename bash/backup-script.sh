@@ -2,24 +2,10 @@
 ##
  # System Backupscript
  #
- # @copyright	2012 Steffen Vogel
- # @license	http://www.gnu.org/licenses/gpl.txt GNU Public License
- # @author	Steffen Vogel <info@steffenvogel.de>
- # @link	http://www.steffenvogel.de
- ##
-##
- # This script is free software: you can redistribute it and/or modify
- # it under the terms of the GNU General Public License as published by
- # the Free Software Foundation, either version 3 of the License, or
- # any later version.
- #
- # This script is distributed in the hope that it will be useful,
- # but WITHOUT ANY WARRANTY; without even the implied warranty of
- # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- # GNU General Public License for more details.
- #
- # You should have received a copy of the GNU General Public License
- # along with this script. If not, see <http://www.gnu.org/licenses/>.
+ # @copyright 2021, Steffen Vogel
+ # @license   http://www.gnu.org/licenses/gpl.txt GNU Public License
+ # @author    Steffen Vogel <post@steffenvogel.de>
+ # @link      https://www.steffenvogel.de
  ##
 
 #=============================================================
@@ -34,7 +20,7 @@ BACKUPDIR="/backup"
 MYSQL_BACKUPDIR="/backup/mysql"
 DATA_BACKUPDIR="/backup/data"
 
-# Wochentag für wöchentliche Backups (1-7; 1 steht für Montag)
+# Wochentag fï¿½r wï¿½chentliche Backups (1-7; 1 steht fï¿½r Montag)
 DOWEEKLY=5
 
 # Kompressionsmethode (gzip oder bzip2)
@@ -68,7 +54,7 @@ LOGERR=$BACKUPDIR/ERRORS_$HOST-`date +%N`.log
 # - quiet : sendet nur Error Logs per Mail
 MAIL_CONTENT="stdout"
 
-# Maximale Größe des Mail Anhangs
+# Maximale Grï¿½ï¿½e des Mail Anhangs
 MAIL_MAXATTSIZE="4000"
 
 # Mail Adresse
@@ -81,7 +67,7 @@ MAIL_ADDR="admin@localhost"
 # FTP Benutzer
 FTP_USERNAME=yourftpusername
 
-# FTP Passwort für $FTP_USERNAME
+# FTP Passwort fï¿½r $FTP_USERNAME
 FTP_PASSWORD=yourftppassword
 
 # Hostname oder IP Adresse des FTP Servers
@@ -91,10 +77,10 @@ FTP_HOST=yourftpserver
 # Daten Einstellungen
 #=============================================================
 
-# Liste der täglichen Backupverzeichnisse (durch " " getrennt)
+# Liste der tï¿½glichen Backupverzeichnisse (durch " " getrennt)
 DATA_DIRNAMES="/home /opt/mails /etc"
 
-# Liste der wöchentlichen Backupverzeichnisse (durch " " getrennt)
+# Liste der wï¿½chentlichen Backupverzeichnisse (durch " " getrennt)
 DATA_WDIRNAMES="/var/www $DATA_DIRNAMES"
 
 # Liste der monatlichen Backupverzeichnisse (durch " " getrennt)
@@ -114,16 +100,16 @@ TARFLAGS="--create --preserve-permissions --dereference --ignore-failed-read --e
 # mySQL Benutzer
 MYSQL_USERNAME=yourmysqlusername
 
-# mySQL Passwort für $MYSQL_USERNAME
+# mySQL Passwort fï¿½r $MYSQL_USERNAME
 MYSQL_PASSWORD=yourmysqlpassword
 
 # Hostname oder IP Adresse des mySQL Servers
 MYSQL_HOST=$HOST
 
-# Liste der täglichen Backupdatenbanken (durch " " getrennt; "all" für alle Datenbanken)
+# Liste der tï¿½glichen Backupdatenbanken (durch " " getrennt; "all" fï¿½r alle Datenbanken)
 MYSQL_DBNAMES="all"
 
-# Liste der wöchentlichen Backupdatenbanken (durch " " getrennt)
+# Liste der wï¿½chentlichen Backupdatenbanken (durch " " getrennt)
 MYSQL_WDBNAMES=$MYSQL_DBNAMES
 
 # Liste der monatlichen Backupdatenbanken (durch " " getrennt)
@@ -132,13 +118,13 @@ MYSQL_MDBNAMES="$MYSQL_WDBNAMES"
 # Datenbanken zum Excluden
 MYSQL_DBEXCLUDE=""
 
-# CREATE DATABASE zu den mySQL Dumps hinzufügen?
+# CREATE DATABASE zu den mySQL Dumps hinzufï¿½gen?
 MYSQL_CREATE_DATABASE=yes
 
 # Komprimierte Verbindung zum mySQL Server
 MYSQL_COMMCOMP=no
 
-# Maximale Größe des Verbindungspuffer zum mySQL Server (Maximum 1GB)
+# Maximale Grï¿½ï¿½e des Verbindungspuffer zum mySQL Server (Maximum 1GB)
 MYSQL_MAX_ALLOWED_PACKET=
 
 # Socketadresse des mySQL Server bei localhost Verbindungen
@@ -174,13 +160,13 @@ if [ "$MYSQL_COMMCOMP" = "yes" ];
 		MYSQL_OPT="$OPT --compress"
 fi
 
-# Maximale Größe des Verbindungspuffer zum mySQL Server (Maximum 1GB)
+# Maximale Grï¿½ï¿½e des Verbindungspuffer zum mySQL Server (Maximum 1GB)
 if [ "$MYSQL_MAX_ALLOWED_PACKET" ];
 	then
 		MYSQL_OPT="$MYSQL_OPT --max_allowed_packet=$MYSQL_MAX_ALLOWED_PACKET"
 fi
 
-# Benötigte Verzeichnisse erstellen
+# Benï¿½tigte Verzeichnisse erstellen
 if [ ! -e "$BACKUPDIR" ]
 	then
 	mkdir -p "$BACKUPDIR"
@@ -236,7 +222,7 @@ display () {
 		end)
 			echo Backup Ende `date`
 			echo ======================================================================
-			echo Benötigter Speicherplatz für Backups:
+			echo Benï¿½tigter Speicherplatz fï¿½r Backups:
 			echo Data : `du -hs "$DATA_BACKUPDIR"`
 			echo mySQL: `du -hs "$MYSQL_BACKUPDIR"`
 			echo All  : `du -hs "$BACKUPDIR"`
@@ -299,33 +285,33 @@ archive () {
 		gzip -l "$1.gz"
 		SUFFIX=".gz"
 	elif [ "$COMP" = "bzip2" ]; then
-		echo Komprimierungs Informationen für "$1.bz2"
+		echo Komprimierungs Informationen fï¿½r "$1.bz2"
 		bzip2 -f -v $1 2>&1
 		SUFFIX=".bz2"
 	else
-		echo "Keine Kompressionsmethode gewählt!"
+		echo "Keine Kompressionsmethode gewï¿½hlt!"
 	fi
 	return 0
 }
 
-# Soll CREATE_DATABASE hinzugefügt werden?
+# Soll CREATE_DATABASE hinzugefï¿½gt werden?
 if [ "$MYSQL_CREATE_DATABASE" = "no" ]; then
 	MYSQL_OPT="$MYSQL_OPT --no-create-db"
 else
 	MYSQL_OPT="$MYSQL_OPT --databases"
 fi
 
-# Wähle alle Datenbanken aus
+# Wï¿½hle alle Datenbanken aus
 if [ "$MYSQL_DBNAMES" = "all" ]; then
-        MYSQL_DBNAMES="`mysql --user=$MYSQL_USERNAME --password=$MYSQL_PASSWORD --host=$MYSQL_HOST --batch --skip-column-names -e "show databases"| sed 's/ /%/g'`"
+	MYSQL_DBNAMES="`mysql --user=$MYSQL_USERNAME --password=$MYSQL_PASSWORD --host=$MYSQL_HOST --batch --skip-column-names -e "show databases"| sed 's/ /%/g'`"
 
-	# Schließe Datenbanken aus
+	# SchlieÃŸe Datenbanken aus
 	for exclude in $MYSQL_DBEXCLUDE
 	do
 		MYSQL_DBNAMES=`echo $MYSQL_DBNAMES | sed "s/\b$exclude\b//g"`
 	done
 
-        MYSQL_MDBNAMES=$MYSQL_DBNAMES
+	MYSQL_MDBNAMES=$MYSQL_DBNAMES
 fi
 
 display start					# Zeige Start Informationen
@@ -340,7 +326,7 @@ fi
 #================================================	
 if [ $DOM = "01" ]; then
 
-# Erstellen benötigte Verzeichnisse
+# Erstellen benï¿½tigte Verzeichnisse
 if [ ! -e "$MYSQL_BACKUPDIR/monthly/$M" ]
 	then
 	mkdir -p "$MYSQL_BACKUPDIR/monthly/$M"
@@ -374,7 +360,7 @@ display datastart
 for DATA_MDIR in $DATA_MDIRNAMES
 do
 
-	# Bereite $DATA_MDIR für den Dateinamen vor
+	# Bereite $DATA_MDIR fï¿½r den Dateinamen vor
 	DATA_MDIR_DISP="`echo $DATA_MDIR | cut -b 2- | sed 's/\//_/g' | sed 's/ //g'"
 	
 	echo Monthly Backup of $DATA_MDIR...
@@ -391,11 +377,11 @@ fi
 
 
 #================================================	
-# Wöchentliches Backup
+# Wï¿½chentliches Backup
 #================================================	
 if [ $DNOW = $DOWEEKLY ]; then
 
-# Erstellen benötigte Verzeichnisse
+# Erstellen benï¿½tigte Verzeichnisse
 if [ ! -e "$MYSQL_BACKUPDIR/weekly/week_$W" ]
 	then
 	mkdir -p "$MYSQL_BACKUPDIR/weekly/week_$W"
@@ -406,7 +392,7 @@ if [ ! -e "$DATA_BACKUPDIR/weekly/week_$W" ]
 	mkdir -p "$DATA_BACKUPDIR/weekly/week_$W"
 fi
 
-# Lösche alte Backups
+# Lï¿½sche alte Backups
 echo Rotating 5 weeks Backups...
 display dl
 if [ "$W" -le 05 ];then
@@ -442,7 +428,7 @@ display datastart
 
 for DATA_WDIR in $DATA_WDIRNAMES
 do
-	# Bereite $DATA_WDIR für den Dateinamen vor
+	# Bereite $DATA_WDIR fï¿½r den Dateinamen vor
 	DATA_DIR_DISP="`echo $DATA_WDIR | cut -b 2- | sed 's/\//_/g' | sed 's/ //g'"
 	
 	echo Weekly Backup of $DATA_WDIR...
@@ -458,9 +444,9 @@ display dataend
 fi
 
 #================================================	
-# Tägliches Backup
+# Tï¿½gliches Backup
 #================================================		
-# Erstellen benötigte Verzeichnisse
+# Erstellen benï¿½tigte Verzeichnisse
 if [ ! -e "$MYSQL_BACKUPDIR/daily/$DOW" ]
 	then
 	mkdir -p "$MYSQL_BACKUPDIR/daily/$DOW"
@@ -471,7 +457,7 @@ if [ ! -e "$DATA_BACKUPDIR/daily/$DOW" ]
 	mkdir -p "$DATA_BACKUPDIR/daily/$DOW"
 fi
 
-# Lösche alte Backups
+# Lï¿½sche alte Backups
 echo Rotating last weeks Backup...
 display l
 eval rm -fv "$MYSQL_BACKUPDIR/daily/$DOW/*" 
@@ -497,7 +483,7 @@ display datastart
 
 for DATA_DIR in $DATA_DIRNAMES
 do
-	# Bereite $DATA_DIR für den Dateinamen vor
+	# Bereite $DATA_DIR fï¿½r den Dateinamen vor
 	DATA_DIR_DISP="`echo $DATA_DIR  | cut -b 2- | sed 's/\//_/g' | sed 's/ //g'"
 	
 	echo Daily Backup of $DATA_DIR...
@@ -519,39 +505,39 @@ if [ "$POSTBACKUP" ]; then
 fi
 
 #Clean up IO redirection
-exec 1>&6 6>&-      # Stelle Standartausgabe wieder her und schließe Datei #6
-exec 1>&7 7>&-      # Stelle Standartausgabe wieder her und schließe Datei #7
+exec 1>&6 6>&-      # Stelle Standartausgabe wieder her und schlieï¿½e Datei #6
+exec 1>&7 7>&-      # Stelle Standartausgabe wieder her und schlieï¿½e Datei #7
 
 if [ "$MAIL_CONTENT" = "files" ]
 then
 	if [ -s "$LOGERR" ]
 	then
-		# Füge bei Fehlern Error Log hinzu
+		# Fï¿½ge bei Fehlern Error Log hinzu
 		MYSQL_BACKUPFILES="$MYSQL_BACKUPFILES $LOGERR"
 		ERRORNOTE="ACHTUNG Backup Fehler: "
 	fi
-	# Ermittel SQL Dump Größe
+	# Ermittel SQL Dump Grï¿½ï¿½e
 	MAIL_ATTSIZE=`du -c $MYSQL_BACKUPFILES | grep "[[:digit:][:space:]]total$" |sed s/\s*total//`
 	if [ $MAIL_MAXATTSIZE -ge $MAIL_ATTSIZE ]
 	then
 		BACKUPFILES=`echo "$BACKUPFILES" | sed -e "s# # -a #g"`	# enable multiple attachments
-		mutt -s "$ERRORNOTE Backup Log and SQL Dump für $HOST - $DATE" $BACKUPFILES $MAIL_ADDR < $LOGFILE		#senden via mutt
+		mutt -s "$ERRORNOTE Backup Log and SQL Dump fï¿½r $HOST - $DATE" $BACKUPFILES $MAIL_ADDR < $LOGFILE		#senden via mutt
 	else
-		cat "$LOGFILE" | mail -s "ACHTUNG! - SQL Dump ist zu groß um gemailt zu werden auf $HOST - $DATE" $MAIL_ADDR
+		cat "$LOGFILE" | mail -s "ACHTUNG! - SQL Dump ist zu groï¿½ um gemailt zu werden auf $HOST - $DATE" $MAIL_ADDR
 	fi
 elif [ "$MAIL_CONTENT" = "log" ]
 then
-	cat "$LOGFILE" | mail -s "Backup Log für $HOST - $DATE" $MAIL_ADDR
+	cat "$LOGFILE" | mail -s "Backup Log fï¿½r $HOST - $DATE" $MAIL_ADDR
 	if [ -s "$LOGERR" ]
 		then
-			cat "$LOGERR" | mail -s "$ERRORNOTE Error Log für: $HOST - $DATE" $MAIL_ADDR
+			cat "$LOGERR" | mail -s "$ERRORNOTE Error Log fï¿½r: $HOST - $DATE" $MAIL_ADDR
 	fi	
 elif [ "$MAIL_CONTENT" = "quiet" ]
 then
 	if [ -s "$LOGERR" ]
 		then
-			cat "$LOGERR" | mail -s "$ERRORNOTE Error Log für $HOST - $DATE" $MAIL_ADDR
-			cat "$LOGFILE" | mail -s "Log für $HOST - $DATE" $MAIL_ADDR
+			cat "$LOGERR" | mail -s "$ERRORNOTE Error Log fï¿½r $HOST - $DATE" $MAIL_ADDR
+			cat "$LOGFILE" | mail -s "Log fï¿½r $HOST - $DATE" $MAIL_ADDR
 	fi
 else
 	if [ -s "$LOGERR" ]
@@ -574,7 +560,7 @@ if [ -s "$LOGERR" ]
 		STATUS=0
 fi
 
-# Löschen der Logfiles
+# Lï¿½schen der Logfiles
 eval rm -f "$LOGFILE"
 eval rm -f "$LOGERR"
 

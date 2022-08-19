@@ -11,8 +11,8 @@
 set -e
 
 if [ $# -ne 2 ]; then
-        echo "Usage: $(basename $0) SOURCE REPO"
-        exit 1
+	echo "Usage: $(basename $0) SOURCE REPO"
+	exit 1
 fi
 
 SRC=$1

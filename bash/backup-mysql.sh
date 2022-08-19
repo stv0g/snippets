@@ -64,7 +64,7 @@ shift $((OPTIND-1))
 
 # parsing backup directory
 if [ -n "$1" ]; then
-        DIR=$(readlink -f $1)
+	DIR=$(readlink -f $1)
 else
 	DIR=$(pwd)
 fi

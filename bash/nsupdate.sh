@@ -2,7 +2,12 @@
 ##
  # Bind9 nsupdate wrapper
  #
+ # @copyright 2013, Andrew Leonard
+ # @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
+ # @author    Andrew Leonard <sysadmin@andyleonard.com>
+ # @author    Steffen Vogel <post@steffenvogel.de>
  # @link      https://www.steffenvogel.de
+ ##
 
 
 function usage {
@@ -65,7 +70,7 @@ shift $((OPTIND-1))
 
 # parsing host
 if [ -n "$1" ]; then
-        HOST=$1
+	HOST=$1
 else
 	echo -e "missing host"
 	echo

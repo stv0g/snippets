@@ -2,10 +2,9 @@
  
 # Must be called with two command-line args.
 # Example: git-svn-relocate.sh http://old.server https://new.server
-if [ $# -ne 2 ]
-then
-  echo "Please invoke this script with two command-line arguments (old and new SVN URLs)."
-  exit $E_NO_ARGS
+if [ $# -ne 2 ]; then
+	echo "Please invoke this script with two command-line arguments (old and new SVN URLs)."
+	exit $E_NO_ARGS
 fi 
 
 # Prepare URLs for regex search and replace.

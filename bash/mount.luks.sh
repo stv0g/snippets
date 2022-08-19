@@ -26,10 +26,10 @@
  # followed by:
  #     mount /home
  #
- # @copyright   2013 Steffen Vogel
- # @license     http://www.gnu.org/licenses/gpl.txt GNU Public License
- # @author      Steffen Vogel <post@steffenvogel.de>
- # @link        http://www.steffenvogel.de
+ # @copyright 2021, Steffen Vogel
+ # @license   http://www.gnu.org/licenses/gpl.txt GNU Public License
+ # @author    Steffen Vogel <post@steffenvogel.de>
+ # @link      https://www.steffenvogel.de
  ##
 
 if [ "$(basename $0)" == "mount.luks" ]; then
@@ -39,9 +39,9 @@ if [ "$(basename $0)" == "mount.luks" ]; then
 	shift 2
 	OPTS=$@
 
-        UUID=$(cryptsetup luksUUID $DEV)
-        if [ $? -ne 0 ]; then
-        	echo -e "$DEV is not a LUKS device"
+	UUID=$(cryptsetup luksUUID $DEV)
+	if [ $? -ne 0 ]; then
+		echo -e "$DEV is not a LUKS device"
 		exit 1
 	fi
 
@@ -61,9 +61,9 @@ elif [ "$(basename $0)" == "umount.luks" ]; then
 	shift
 	OPTS=$@
 
-        umount -i $OPTS $DEV
-        # NOTE: The umount option '-i' is essentially required. It skips this
-        # helper script which would cause otherwise an endless self recursion
+	umount -i $OPTS $DEV
+	# NOTE: The umount option '-i' is essentially required. It skips this
+	# helper script which would cause otherwise an endless self recursion
 
 	cryptsetup luksClose $UUID
 fi

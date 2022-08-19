@@ -24,11 +24,11 @@
  ##
 
 function usage {
-        echo "Usage: $(basename $0) SOURCE DEST"
-        echo
-        echo "   SOURCE  a path to the subvolume to backup"
-        echo "   DEST    a path to the backup destination"
-        exit 1
+	echo "Usage: $(basename $0) SOURCE DEST"
+	echo
+	echo "  SOURCE  a path to the subvolume to backup"
+	echo "  DEST    a path to the backup destination"
+	exit 1
 }
 
 set -e
@@ -36,7 +36,7 @@ set -e
 if [ $# -ne 2 ]; then
 	echo -e "invalid args!"
 	echo
-        usage
+	usage
 fi
 
 DATE=$(date +%F_%H-%M-%S)
@@ -75,4 +75,3 @@ btrfs subvolume snapshot -r $DEST/.current $DEST/$DATE
 
 # create symlink to latest snapshot
 ln -rsfT $DEST/$DATE $DEST/latest
-
