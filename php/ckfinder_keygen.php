@@ -15,8 +15,8 @@
 	<title>Keygen for CKFinder</title>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<script src="scripts.js" type="text/javascript"></script>
-        <link rel="stylesheet" type="text/css" href="style.css">
-        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 </head>
 <body>
 
