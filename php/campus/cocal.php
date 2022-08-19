@@ -358,7 +358,7 @@ else {
 	</p>
 
 	<footer>
-		<p>by <a href="http://www.steffenvogel.de">Steffen Vogel</a> - <a href="http://dev.0l.de/tools/campus">help</a></p>
+		<p>by <a href="https://www.steffenvogel.de">Steffen Vogel</a> - <a href="http://dev.0l.de/tools/campus">help</a></p>
 	</footer>
 </div>
 </body>

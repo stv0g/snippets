@@ -2,7 +2,7 @@
 /**
  * Keygen for CKFinder
  * tested successfully with version 1.4.1.1
- * written by Steffen Vogel (info@steffenvogel.de)
+ * written by Steffen Vogel (post@steffenvogel.de)
  * reverse engenering by Micha Schwab & Steffen Vogel
  */
 ?>

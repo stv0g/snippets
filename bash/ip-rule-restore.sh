@@ -1,4 +1,12 @@
 #!/bin/bash
+##
+ # Setup policy routing
+ #
+ # @copyright 2021, Steffen Vogel
+ # @license   http://www.gnu.org/licenses/gpl.txt GNU Public License
+ # @author    Steffen Vogel <post@steffenvogel.de>
+ # @link      https://www.steffenvogel.de
+ ##
 
 GW_IF=bond0
 

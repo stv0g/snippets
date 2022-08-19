@@ -89,7 +89,7 @@ function check() {
 	}
 	
 	alert('Alright! Welcome on board!');
-	window.location.href = 'http://www.steffenvogel.de';
+	window.location.href = 'https://www.steffenvogel.de';
 }
 
 function intro(step) {

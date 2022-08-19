@@ -5,22 +5,9 @@ Plugin URI:   http://0l.de/projects/wordpress/plugins/linkpreview
 Description:  Place an overview of your post embedded links below your post
 Version:      0.1
 Author:       Steffen Vogel
-Author URI:   http://www.steffemvogel.de
-
-	Copyright 2010  Steffen Vogel (info@steffenvogel.de)
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, version 2, as 
-    published by the Free Software Foundation.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+Author URI:   https://www.steffenvogel.de
+Author Mail:  post@steffenvogel.de
+Copyright:    2021, Steffen Vogel
 */
 
 /* Use the admin_menu action to define the custom boxes */

@@ -50,8 +50,8 @@ for ($i = 3; $i < 14; $i++) {
 
 echo '</select></form>
 <div id="copy">&copy; Steffen Vogel<br />
-<a href="mailto:info@steffenvogel.de">info@steffenvogel.de</a><br />
-<a href="http://www.steffenvogel.de">http://www.steffenvogel.de</a><br />
+<a href="mailto:post@steffenvogel.de">post@steffenvogel.de</a><br />
+<a href="https://www.steffenvogel.de">https://www.steffenvogel.de</a><br />
 Based on Micha\'s Javascript & CSS frontend</div>
 </div>
 </body>
