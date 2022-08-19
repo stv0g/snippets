@@ -1,0 +1,72 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: accelerated-stats
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: accelerated-stats
+  namespace: accelerated-stats
+  labels:
+    app: accelerated-stats
+spec:
+  selector:
+    matchLabels:
+      app: accelerated-stats
+  template:
+    metadata:
+      labels:
+        app: accelerated-stats
+    spec:
+      containers:
+      - name: accelerated-stats
+        image: stv0g/accelerated-stats
+        imagePullPolicy: Always
+        ports:
+        - name: http-metrics
+          containerPort: 5000
+        envFrom:
+        - secretRef:
+            name: accelerated-stats
+        resource:
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: accelerated-stats
+  namespace: accelerated-stats
+  labels:
+    app: accelerated-stats
+spec:
+  selector:
+    app: accelerated-stats
+  ports:
+  - protocol: TCP
+    port: 80
+    name: http-metrics
+    targetPort: http-metrics
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: accelerated-stats
+  namespace: accelerated-stats
+  labels:
+    app: accelerated-stats
+spec:
+  selector:
+    matchLabels:
+      app: accelerated-stats
+  namespaceSelector:
+    matchNames:
+    - accelerated-stats
+  endpoints:
+  - port: http-metrics
+    interval: 1m
+
+# Create secret:
+# kubectl --namespace=accelerated-stats create secret generic accelerated-stats \
+#   --from-literal=KDNUMMER=$(pass providers/interface.datafabrik.de | sed -nE 's/^User: (.*)/\1/p') \
+#   --from-literal=PASSWORD=$(pass providers/interface.datafabrik.de | sed -n 1p)

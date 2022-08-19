@@ -1,0 +1,12 @@
+# Accelerated Server Stats Exporter for Prometheus
+
+## Examples
+
+```bash
+export KDNUMMER=10642
+export PASSWORD=$(pass providers/interface.datafabrik.de | head -n1)
+
+# python3 accelerated_stats $* usage
+python3 accelerated_stats $* usage_sum
+# python3 accelerated_stats $* -f raw -F usage_avg stats
+```
