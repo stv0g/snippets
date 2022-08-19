@@ -1,0 +1,4 @@
+#dnspython
+git+https://github.com/rthalley/dnspython
+python-freeipa
+pynetbox
