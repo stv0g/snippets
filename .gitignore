@@ -5,3 +5,7 @@
 
 gc_spider/cookie.txt
 php/campus/cocal.db
+
+# Python
+*.pyc
+*.egg-info/
