@@ -98,8 +98,8 @@ static int load_binary(struct linux_binprm *bprm)
 }
 
 static struct linux_binfmt script_format = {
-        .module         = THIS_MODULE,
-        .load_binary    = load_binary,
+	.module         = THIS_MODULE,
+	.load_binary    = load_binary,
 };
 
 static int init(void)
