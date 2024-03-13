@@ -33,6 +33,7 @@ def main():
     default_host = socket.getfqdn()
 
     parser = argparse.ArgumentParser()
+    parser.add_argument('--clear-cache', '-c', action='store_true', help='Clear cache')
     parser.add_argument('--username', '-u', type=str, required=True)
 
     password = parser.add_mutually_exclusive_group(required=True)
@@ -43,6 +44,9 @@ def main():
     parser.add_argument('host_unit', type=str, default=f'{default_host}/{default_unit}')
 
     args = parser.parse_args()
+
+    if args.clear_cache:
+        monitors.cache.clear()
 
     if args.password_file is not None:
         with open(args.password_file) as f:
@@ -76,9 +80,9 @@ def main():
         logging.error("No monitor found for: %s/%s", host, unit)
         sys.exit(1)
 
-    logging.info("Monitor: %s", monitor.name)
+    logging.info("Monitor: %s", monitor.get('name'))
 
-    push(args.url, monitor.token, state, msg, duration*1e3)
+    push(args.url, monitor.get('pushToken'), state, msg, duration*1e3)
 
 
 if __name__ == '__main__':
