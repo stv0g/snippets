@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "push-status"
+version = "0.1.0"
+description = "Push status of systemd units to Uptime-Kuma"
+authors = ["Steffen Vogel <post@steffenvogel.de>"]
+license = "Apache-2.0"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+diskcache = "^5.6.3"
+retry = "^0.9.2"
+uptime-kuma-api = "^1.2.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+push-status = 'push_status.push_status:main'
