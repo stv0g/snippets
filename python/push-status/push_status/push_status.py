@@ -46,7 +46,7 @@ def main():
 
     if args.password_file is not None:
         with open(args.password_file) as f:
-            password = f.readline
+            password = f.readline().strip()
     else:
         password = args.password
 
