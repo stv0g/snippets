@@ -54,4 +54,4 @@ def get_systemd(url, username, password, host, unit) -> Optional[dict]:
         if unit != u or host != h:
             continue
 
-        monitor
+        return monitor

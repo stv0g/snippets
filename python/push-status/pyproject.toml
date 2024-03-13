@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "push-status"
-version = "0.1.1"
+version = "0.1.2"
 description = "Push status of systemd units to Uptime-Kuma"
 authors = ["Steffen Vogel <post@steffenvogel.de>"]
 license = "Apache-2.0"
