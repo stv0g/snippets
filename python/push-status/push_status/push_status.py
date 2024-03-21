@@ -55,7 +55,7 @@ def main():
         password = args.password
 
     try:
-        host, unit = args.host_unit.split('__')
+        host, unit = args.host_unit.split('/')
     except:
         host = default_host
         unit = args.host_unit
