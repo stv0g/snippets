@@ -10,24 +10,37 @@
     };
   };
 
-  outputs = {
+  outputs = inputs @ {
     self,
     nixpkgs,
     flake-utils,
     poetry2nix,
   }:
     flake-utils.lib.eachDefaultSystem (system: let
-      # see https://github.com/nix-community/poetry2nix/tree/master#api for more functions and examples.
       pkgs = nixpkgs.legacyPackages.${system};
-      inherit (poetry2nix.lib.mkPoetry2Nix {inherit pkgs;}) mkPoetryApplication;
+      poetry2nix = inputs.poetry2nix.lib.mkPoetry2Nix {inherit pkgs;};
+      inherit (poetry2nix) mkPoetryApplication defaultPoetryOverrides;
     in {
       packages = {
-        push-status = mkPoetryApplication {projectDir = self;};
-        default = self.packages.${system}.myapp;
+        push-status = mkPoetryApplication {
+          projectDir = self;
+          overrides =
+            defaultPoetryOverrides.extend
+            (self: super: {
+              uptime-kuma-api =
+                super.uptime-kuma-api.overridePythonAttrs
+                (
+                  old: {
+                    buildInputs = (old.buildInputs or []) ++ [super.setuptools];
+                  }
+                );
+            });
+        };
+        default = self.packages.${system}.push-status;
       };
 
       devShells.default = pkgs.mkShell {
-        inputsFrom = [self.packages.${system}.myapp];
+        inputsFrom = [self.packages.${system}.push-status];
         packages = [pkgs.poetry];
       };
     });
